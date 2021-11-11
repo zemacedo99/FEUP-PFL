@@ -2,7 +2,8 @@
 -- Normal recursion algorythm for fibonacci
 fibRec :: (Integral a) => a -> a
 fibRec n
-  | n <= 1 = 1
+  | n == 0 = 0
+  | n == 1 = 1
   | otherwise = fibRec (n - 1) + fibRec (n - 2)
 
 -- 1.2
@@ -16,6 +17,14 @@ fibLista' (a, b) _ = (b, a + b)
 
 fibLista :: Num b => Int -> b
 fibLista n = snd (foldl fibLista' (0, 1) (replicate (n - 1) 0))
+
+-- another solution https://riptutorial.com/haskell/example/12240/fibonacci--using-lazy-evaluation
+
+fibLista2 :: Num a => Int -> a
+fibLista2 n = fibLista2 !! n
+    where
+    fibLista2 = 0 : 1 : map f [2..]
+    f n = fibLista2 !! (n-1) + fibLista2 !! (n-2)
 
 -- 1.3
 -- Calculates an infinite list of fibonnacci numbers by producing the list of corresponding sums
