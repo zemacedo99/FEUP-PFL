@@ -7,3 +7,14 @@
 -- Stability   : experimental
 -- Portability : POSIX.
 module BigNumber where
+
+import Data.List.Split
+import Data.Text.Internal.Read (digitToInt)
+
+type BigNumber = [Int]
+
+scanner :: String -> BigNumber
+scanner str = bigNumber
+  where
+    splitString = splitOn "" str
+    bigNumber = [digitToInt (splitString !! n) | n <- [0 .. (length (splitString - 1))]]
