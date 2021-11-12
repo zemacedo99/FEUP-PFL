@@ -20,4 +20,9 @@ scanner str = map (read . (:"")) str :: BigNumber
 
 output :: BigNumber -> String
 output bn = [head (show str) | str <- bn]
-  
+
+somaBN :: BigNumber -> BigNumber -> BigNumber
+somaBN [] bn2 = bn2
+somaBN bn [] = bn
+somaBN bn bn2 = zipWith (+) bn bn2
+--deal with carry and insert reverse to add the numbers from right to left
