@@ -21,8 +21,20 @@ scanner str = map (read . (:"")) str :: BigNumber
 output :: BigNumber -> String
 output bn = [head (show str) | str <- bn]
 
-somaBN :: BigNumber -> BigNumber -> BigNumber
-somaBN [] bn2 = bn2
-somaBN bn [] = bn
-somaBN bn bn2 = zipWith (+) bn bn2
---deal with carry and insert reverse to add the numbers from right to left
+
+somaBN' :: Integral t => [t] -> [t] -> t -> [t]
+somaBN' [] x carry
+    | carry /= 0 = somaBN' [carry] x 0 --add the carry as a digit and add to the value x
+    | carry == 0 = x
+
+somaBN' x [] carry
+    | carry /= 0 = somaBN' [carry] x 0
+    | carry == 0 = x
+
+somaBN' (x:xs) (y:ys) carry =  val : somaBN' xs ys res
+    where val = (x+y+carry) `rem` 10
+          res = (x+y+carry) `quot` 10
+
+
+somaBN :: BigNumber -> BigNumber  -> BigNumber --bug -91 + 1 = -92 devido ao tamanho das listas serem diferentes 
+somaBN bn1 bn2 = reverse( somaBN' (reverse bn1) (reverse bn2) 0)
