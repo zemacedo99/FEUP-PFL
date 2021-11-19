@@ -8,7 +8,9 @@
 -- Portability : POSIX.
 module Fib where
 
-import BigNumber ()
+import BigNumber
+
+-- *** 1 ***
 
 -- 1.1
 -- Normal recursion algorythm for fibonacci
@@ -44,3 +46,5 @@ fibListaInfinita :: Num a => Int -> a
 fibListaInfinita n =
   let fib = 0 : 1 : zipWith (+) fib (tail fib)
    in fib !! n
+
+-- *** 3 ***

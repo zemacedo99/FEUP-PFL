@@ -12,4 +12,3 @@ truncateString str = if isNegativeNumber then '-' : truncated else truncated
   where
     isNegativeNumber = head str == '-'
     truncated = dropWhile (== '0') (if isNegativeNumber then tail str else str)  
-    
