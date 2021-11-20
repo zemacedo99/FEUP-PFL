@@ -114,17 +114,36 @@ subBN bn1 bn2
 
 -- 2.6
 -- mulBN: multiply 2 big numbers
+mulBN'' :: Int -> Int -> BigNumber -> BigNumber
+mulBN'' a carry bn
+  | null bn = bn
+  | a == 0 = [0 | i <- bn]
+  | a == 1 = bn
+  | otherwise = res : mulBN'' a nextCarry (drop 1 bn)
+  where
+    res = if op >= 10 then op `rem` 10 else op
+    nextCarry = if op >= 10 then op `div` 10 else 0
+    op = (a * head bn) + carry
+
 mulBN' :: BigNumber -> BigNumber -> BigNumber
-mulBN' bn1 bn2 = rbn1
+mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
   where
     rbn1 = reverse bn1
     rbn2 = reverse bn2
+    resMulZeros = head resMul : [resMul !! i ++ replicate i 0 | i <- [0..length resMul - 1], i > 0]
+    resMul = [reverse (mulBN'' a 0 rbn1) | a <- rbn2]
 
 mulBN :: BigNumber -> BigNumber -> BigNumber
-mulBN bn1 bn2
-  | isZeroBN bn1 || isZeroBN bn2 = scanner "0"
-  | otherwise = reverse (mulBN' bn1 bn2)
-
+mulBN bn1 bn2 
+  | output bn1 == "-1" = head bn2 * (-1) : drop 1 bn2
+  | output bn2 == "-1" = head bn1 * (-1) : drop 1 bn1
+  | isZeroBN bn1 || isZeroBN bn2 = [0]
+  | isNegBN bn1 `xor` isNegBN bn2 = negBN (mulBN' (negBN negative) positive)
+  | otherwise = mulBN' bn1 bn2
+  where
+    negative = if isNegBN bn1 then bn1 else bn2
+    positive = if isNegBN bn1 then bn2 else bn1
+    
 -- 2.7
 -- divBN: divide 2 big numbers
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)

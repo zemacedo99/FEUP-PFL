@@ -11,4 +11,9 @@ truncateString :: String ->  String
 truncateString str = if isNegativeNumber then '-' : truncated else truncated
   where
     isNegativeNumber = head str == '-'
-    truncated = dropWhile (== '0') (if isNegativeNumber then tail str else str)  
+    truncated = dropWhile (== '0') (if isNegativeNumber then tail str else str)
+
+xor :: Bool -> Bool -> Bool
+xor x y | x && not y = True
+        | not x && y = True
+        | otherwise = False
