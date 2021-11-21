@@ -100,7 +100,7 @@ subBN' bn1 bn2
     smaller = reverse (minBN bn1 bn2)
     smallerWithZeros =  smaller ++ take subLen zeros
     subLen = length bigger - length smaller
-    biggerWithCarry = (drop 1 bigger !! 1 + 1) : drop 2 bigger
+    biggerWithCarry = ((drop 1 bigger !! 1) + 1) : drop 2 bigger
     zeros = [0 | n <- [1..9999]]
 
 subBN :: BigNumber -> BigNumber -> BigNumber

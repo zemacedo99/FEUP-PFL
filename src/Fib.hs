@@ -7,8 +7,8 @@
 -- Stability   : experimental
 -- Portability : POSIX.
 module Fib where
-
 import BigNumber
+import Utils
 
 -- *** 1 ***
 
@@ -35,8 +35,8 @@ fibLista n = snd (foldl fibLista' (0, 1) (replicate (n - 1) 0))
 fibLista2 :: Num a => Int -> a
 fibLista2 n = fibLista2 !! n
   where
-    fibLista2 = 0 : 1 : map f [2 ..]
-    f n = fibLista2 !! (n -1) + fibLista2 !! (n -2)
+    fibLista2 = 1 : 1 : map f [2 ..]
+    f n = fibLista2 !! (n - 1) + fibLista2 !! (n - 2)
 
 -- 1.3
 -- Calculates an infinite list of fibonnacci numbers by producing the list of corresponding sums
@@ -48,3 +48,29 @@ fibListaInfinita n =
    in fib !! n
 
 -- *** 3 ***
+
+-- 3.1
+-- TODO fix breaking on fib n, n > 9
+fibRecBN' :: BigNumber -> BigNumber
+fibRecBN' bn
+  | output bn == "0" = [1]
+  | output bn == "1" = [1]
+  | otherwise = fibRecBN' out1 `somaBN` fibRecBN' out2
+  where
+    out1 = bn `subBN` [1]
+    out2 = bn `subBN` [2]
+
+fibRecBN :: String -> String
+fibRecBN n = output (fibRecBN' (scanner n))
+
+-- 3.2
+
+
+-- 3.3
+fibListaInfinitaBN' :: Int -> BigNumber
+fibListaInfinitaBN' n =
+  let fib = [0] : [1] : zipWith somaBN fib (tail fib)
+   in fib !! n
+
+fibListaInfinitaBN :: Int -> String
+fibListaInfinitaBN n = output (fibListaInfinitaBN' n)
