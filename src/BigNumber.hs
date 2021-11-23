@@ -149,9 +149,10 @@ mulBN bn1 bn2
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
 divBN []  bn2 = ([],[])
+divBN bn1 [] = ([],[])
 divBN bn1 bn2
   | maxBN bn1 bn2 == bn1 = (quo,res)
-  | otherwise = ([0],bn1)
+  | otherwise = ([],bn1)
 
   where
         newDivisor = if res /= [0] then head res : drop 1 divisor else drop 1 divisor
@@ -160,4 +161,8 @@ divBN bn1 bn2
         divisor = if head bn1 <= head bn2
                   then (head bn1 * 10 + head (tail bn1)) : drop 1 (tail bn1)
                   else bn1
-        
+      
+-- todo: divBN [9,2,1] [2] = [4,6] errado e  divBN [9,2,9] [2] = [4,6,4] certo why? 
+-- todo: colocar divisor a conseguir verificar mais de 2 casas
+-- 
+
