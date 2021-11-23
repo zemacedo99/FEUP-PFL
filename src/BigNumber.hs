@@ -9,7 +9,7 @@
 module BigNumber where
 
 import Utils
-import Text.Html (sub)
+import System.Win32 (COORD(yPos))
 
 -- *** 2 ***
 
@@ -134,7 +134,7 @@ mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
     resMul = [reverse (mulBN'' a 0 rbn1) | a <- rbn2]
 
 mulBN :: BigNumber -> BigNumber -> BigNumber
-mulBN bn1 bn2 
+mulBN bn1 bn2
   | output bn1 == "-1" = head bn2 * (-1) : drop 1 bn2
   | output bn2 == "-1" = head bn1 * (-1) : drop 1 bn1
   | isZeroBN bn1 || isZeroBN bn2 = [0]
@@ -143,8 +143,21 @@ mulBN bn1 bn2
   where
     negative = if isNegBN bn1 then bn1 else bn2
     positive = if isNegBN bn1 then bn2 else bn1
-    
+
 -- 2.7
 -- divBN: divide 2 big numbers
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
-divBN x y = (scanner "123", scanner "321")
+
+divBN []  bn2 = ([],[])
+divBN bn1 bn2
+  | maxBN bn1 bn2 == bn1 = (quo,res)
+  | otherwise = ([0],bn1)
+
+  where
+        newDivisor = if res /= [0] then head res : drop 1 divisor else drop 1 divisor
+        quo =  (head divisor `div` head bn2) : fst (divBN newDivisor bn2)
+        res =  [head divisor `mod` head bn2]
+        divisor = if head bn1 <= head bn2
+                  then (head bn1 * 10 + head (tail bn1)) : drop 1 (tail bn1)
+                  else bn1
+        
