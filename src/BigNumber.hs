@@ -38,9 +38,21 @@ output bn
 
 -- AUX
 minBN :: BigNumber -> BigNumber -> BigNumber
-minBN bn1 bn2 = minimum
+minBN bn1 bn2 = min
   where
-    minimum
+    min 
+      | isNegBN bn1 && isNegBN bn2  =  minNeg 
+      | isNegBN bn1  =  bn1 
+      | isNegBN bn2  =  bn2
+      | otherwise = minPos
+    minNeg
+      | output bn1 == output bn2 = bn1
+      | length bn1 > length bn2 = bn1
+      | length bn2 > length bn1 = bn2
+      | head bn1 > head bn2 = bn1
+      | head bn2 > head bn1 = bn2
+      | otherwise = maxBN (drop 1 bn1) (drop 1 bn2)
+    minPos
       | output bn1 == output bn2 = bn1
       | length bn1 < length bn2 = bn1
       | length bn2 < length bn1 = bn2
@@ -49,15 +61,27 @@ minBN bn1 bn2 = minimum
       | otherwise = minBN (drop 1 bn1) (drop 1 bn2)
 
 maxBN :: BigNumber -> BigNumber -> BigNumber
-maxBN bn1 bn2 = minimum
+maxBN bn1 bn2 = max
   where
-    minimum
+    max 
+      | isNegBN bn1 && isNegBN bn2  =  maxNeg 
+      | isNegBN bn1  =  bn2 
+      | isNegBN bn2  =  bn1
+      | otherwise = maxPos
+    maxNeg
+      | output bn1 == output bn2 = bn1
+      | length bn1 > length bn2 = bn2
+      | length bn2 > length bn1 = bn1
+      | head bn1 > head bn2 = bn2
+      | head bn2 > head bn1 = bn1
+      | otherwise = minBN (drop 1 bn1) (drop 1 bn2)
+    maxPos
       | output bn1 == output bn2 = bn1
       | length bn1 > length bn2 = bn1
       | length bn2 > length bn1 = bn2
       | head bn1 > head bn2 = bn1
       | head bn2 > head bn1 = bn2
-      | otherwise = minBN (drop 1 bn1) (drop 1 bn2)
+      | otherwise = maxBN (drop 1 bn1) (drop 1 bn2)
 
 negBN :: BigNumber -> BigNumber
 negBN bn = (head bn * (-1)) : tail bn
@@ -67,6 +91,9 @@ isZeroBN bn = sum bn == 0
 
 isNegBN :: BigNumber -> Bool
 isNegBN bn = head bn < 0
+
+isPosBN :: BigNumber -> Bool
+isPosBN bn = head bn > 0
 
 -- 2.4
 -- somaBN: sum 2 big numbers
@@ -146,23 +173,32 @@ mulBN bn1 bn2
 
 -- 2.7
 -- divBN: divide 2 big numbers
-divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+-- divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
-divBN []  bn2 = ([],[])
-divBN bn1 [] = ([],[])
-divBN bn1 bn2
-  | maxBN bn1 bn2 == bn1 = (quo,res)
-  | otherwise = ([],bn1)
+divBN :: BigNumber -> BigNumber -> [BigNumber]
+divBN bn1 bn2= [mulBN bn x| bn <- repeat bn1, x <- listaInfBN 1,  maxBN (mulBN bn x) bn2 == mulBN bn x]
 
-  where
-        newDivisor = if res /= [0] then head res : drop 1 divisor else drop 1 divisor
-        quo =  (head divisor `div` head bn2) : fst (divBN newDivisor bn2)
-        res =  [head divisor `mod` head bn2]
-        divisor = if head bn1 <= head bn2
-                  then (head bn1 * 10 + head (tail bn1)) : drop 1 (tail bn1)
-                  else bn1
-      
--- todo: divBN [9,2,1] [2] = [4,6] errado e  divBN [9,2,9] [2] = [4,6,4] certo why? 
--- todo: colocar divisor a conseguir verificar mais de 2 casas
--- 
+
+listaInfBN :: Int -> [BigNumber]
+listaInfBN n = [n] : listaInfBN (n + 1)
+
+
+-- divBN []  bn2 = ([],[])
+-- divBN bn1 [] = ([],[])
+-- divBN bn1 bn2
+--   | maxBN bn1 bn2 == bn1 = (quo,res)
+--   | otherwise = ([],bn1)
+
+--   where
+--         newDivisor = if res /= [0] then head res : drop 1 divisor else drop 1 divisor
+--         quo =  (head divisor `div` head bn2) : fst (divBN newDivisor bn2)
+--         res =  [head divisor `mod` head bn2]
+--         divisor = if head bn1 < head bn2
+--                   then (head bn1 * 10 + head (tail bn1)) : drop 1 (tail bn1)
+--                   else bn1
+
+-- todo: divBN [9,2,1] [2] = [4,6] errado e  divBN [9,2,9] [2] = [4,6,4] certo why? o mesmo acontece para quando 20 / 2
+-- todo: divBN divBN [9,2,2] [2] da resto 1 e devia dar resto 0
+-- todo: divisor fazer o then recursivo até divisor >= head bn2 
+-- todo: fazer um dividendo como o divisor para nao usar head bn2 s 
 
