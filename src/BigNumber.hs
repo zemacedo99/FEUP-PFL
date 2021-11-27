@@ -9,7 +9,6 @@
 module BigNumber where
 
 import Utils
-import System.Win32 (COORD(yPos))
 
 -- *** 2 ***
 
@@ -40,9 +39,9 @@ output bn
 minBN :: BigNumber -> BigNumber -> BigNumber
 minBN bn1 bn2 = min
   where
-    min 
-      | isNegBN bn1 && isNegBN bn2  =  minNeg 
-      | isNegBN bn1  =  bn1 
+    min
+      | isNegBN bn1 && isNegBN bn2  =  minNeg
+      | isNegBN bn1  =  bn1
       | isNegBN bn2  =  bn2
       | otherwise = minPos
     minNeg
@@ -63,9 +62,9 @@ minBN bn1 bn2 = min
 maxBN :: BigNumber -> BigNumber -> BigNumber
 maxBN bn1 bn2 = max
   where
-    max 
-      | isNegBN bn1 && isNegBN bn2  =  maxNeg 
-      | isNegBN bn1  =  bn2 
+    max
+      | isNegBN bn1 && isNegBN bn2  =  maxNeg
+      | isNegBN bn1  =  bn2
       | isNegBN bn2  =  bn1
       | otherwise = maxPos
     maxNeg
@@ -120,24 +119,54 @@ subBN' :: BigNumber -> BigNumber -> BigNumber
 subBN' bn1 bn2
     | null bn1 = bn2
     | null bn2 = bn1
-    | head bigger >= head smallerWithZeros = (head bigger - head smallerWithZeros) : subBN' (reverse (drop 1 smallerWithZeros)) (reverse (drop 1 bigger))
-    | otherwise = (10 + head bigger - head smallerWithZeros) : subBN' biggerWithCarry (drop 1 (reverse smaller))
+    | head bigger >= head smallerWithZeros = (head bigger - head smallerWithZeros) : subBN' ( drop 1 smallerWithZeros) ( drop 1 bigger)
+    | otherwise = (10 + head bigger - head smallerWithZeros) : subBN' biggerWithCarry (drop 1 smaller)
   where
-    bigger = reverse (maxBN bn1 bn2)
-    smaller = reverse (minBN bn1 bn2)
+    bigger =  maxBN bn1 bn2
+    smaller =  minBN bn1 bn2
     smallerWithZeros =  smaller ++ take subLen zeros
     subLen = length bigger - length smaller
-    biggerWithCarry = ((drop 1 bigger !! 1) + 1) : drop 2 bigger
+    biggerWithCarry = ((drop 1 bigger !! 1) - 1) : drop 2 bigger
     zeros = [0 | n <- [1..9999]]
 
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
   | isZeroBN bn1 = negBN bn2
   | isZeroBN bn2 = bn1
-  | max bn1 bn2 == bn1 = res
+  | maxBN bn1 bn2 == bn1 = res
   | otherwise = negBN res
   where
-    res = reverse (subBN' bn1 bn2)
+    res = reverse (subBN' (reverse bn1) (reverse bn2))
+
+
+
+subBN2' :: [Int] -> [Int] -> Int -> [Int]
+subBN2' [] x carry
+  | carry == 0 = x
+  | otherwise = []
+subBN2' x [] carry
+  | carry == 0 = x
+  | otherwise = []
+
+--head xs - 1: tail xs
+subBN2' (x : xs) (y : ys) carry  = val : subBN2' xs ys res
+  where
+    ny
+      | y + carry >= 10 = 0
+      | otherwise = y + carry
+    nc
+      | y + carry >= 10 = 1
+      | otherwise = 0
+    val
+      | x >= ny =  x - ny 
+      | x < ny = (x + 10) - ny
+    res = if x >= ny then nc  else  1 + nc
+
+subBN2 :: BigNumber -> BigNumber -> BigNumber
+subBN2 bn1 bn2
+  | maxBN bn1 bn2 == bn1 = reverse (subBN2' (reverse bn1) (reverse bn2) 0)
+  | otherwise = negBN(reverse (subBN2' (reverse bn2) (reverse bn1) 0))
+
 
 -- 2.6
 -- mulBN: multiply 2 big numbers
