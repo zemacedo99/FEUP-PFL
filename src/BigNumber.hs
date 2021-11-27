@@ -151,15 +151,6 @@ somaBN bn1 bn2
     isNegBn2 = isNegBN bn2
 
 -- 2.5
-subBN'' :: [Int] -> [Int] -> Int -> [Int]
-subBN'' [] x carry
-  | carry == 0 = x
-  | otherwise = subBN' x [carry] 0
-
-subBN'' x [] carry
-  | carry == 0 = x
-  | otherwise = subBN' x [carry] 0
-
 subBN' :: [Int] -> [Int] -> Int -> [Int]
 subBN' [] x carry
   | carry == 0 = x
@@ -169,9 +160,7 @@ subBN' x [] carry
   | carry == 0 = x
   | otherwise = subBN' x [carry] 0
 
-subBN' (x : xs) (y : ys) carry
-  | (x : xs) `equalsBN` [1] || (y : ys) `equalsBN` [1] =  val : subBN'' xs ys res
-  | otherwise = val : subBN' xs ys res
+subBN' (x : xs) (y : ys) carry =  val : subBN' xs ys res
   where
     ny
       | y + carry >= 10 = 0
