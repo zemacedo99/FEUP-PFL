@@ -136,8 +136,6 @@ somaBN' (x : xs) (y : ys) carry = val : somaBN' xs ys res
     val = (x + y + carry) `rem` 10
     res = (x + y + carry) `quot` 10
 
--- 2 + (-22) = 2 - 22 = -20
-
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN bn1 bn2
   | isNegBn1 && isNegBn2 = negBN (absBn1 `somaBN` absBn2)
@@ -193,13 +191,6 @@ subBN bn1 bn2
     isNegBn1 = isNegBN bn1
     isNegBn2 = isNegBN bn2
 
-
---       100
---        20
---       000
---      2000
-
-
 -- 2.6
 -- mulBN: multiply 2 big numbers
 mulBN'' :: Int -> Int -> BigNumber -> BigNumber
@@ -245,9 +236,6 @@ divBN bn1 bn2 =  (quociente,resto)
     lastMultiple = last multiplesList
     quociente = scanner (show (length multiplesList))
     resto     = scanner (output (bn1 `subBN` lastMultiple))
-
-
--- resto bn1 bn2 = bn1 `subBN` quociente
 
 listaInfBN :: BigNumber -> [BigNumber]
 listaInfBN n = n : listaInfBN (n `somaBN` [1])
