@@ -9,7 +9,6 @@
 module BigNumber where
 
 import Utils
-import System.Win32 (COORD(yPos))
 
 -- *** 2 ***
 
