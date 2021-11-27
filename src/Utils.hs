@@ -8,7 +8,9 @@
 module Utils where
 
 truncateString :: String ->  String
-truncateString str = if isNegativeNumber then '-' : truncated else truncated
+truncateString str 
+  | str == "0" = "0"
+  | otherwise = if isNegativeNumber then '-' : truncated else truncated
   where
     isNegativeNumber = head str == '-'
     truncated = dropWhile (== '0') (if isNegativeNumber then tail str else str)

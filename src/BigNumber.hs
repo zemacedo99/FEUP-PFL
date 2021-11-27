@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
 -- |
 -- Module      : BigNumber
 -- Description : Implementação de uma biblioteca de big-numbers em Haskell
@@ -150,15 +151,27 @@ somaBN bn1 bn2
     isNegBn2 = isNegBN bn2
 
 -- 2.5
+subBN'' :: [Int] -> [Int] -> Int -> [Int]
+subBN'' [] x carry
+  | carry == 0 = x
+  | otherwise = subBN' x [carry] 0
+
+subBN'' x [] carry
+  | carry == 0 = x
+  | otherwise = subBN' x [carry] 0
+
 subBN' :: [Int] -> [Int] -> Int -> [Int]
 subBN' [] x carry
   | carry == 0 = x
-  | otherwise = []
+  | otherwise = subBN' x [carry] 0
+
 subBN' x [] carry
   | carry == 0 = x
-  | otherwise = []
+  | otherwise = subBN' x [carry] 0
 
-subBN' (x : xs) (y : ys) carry  = val : subBN' xs ys res
+subBN' (x : xs) (y : ys) carry
+  | (x : xs) `equalsBN` [1] || (y : ys) `equalsBN` [1] =  val : subBN'' xs ys res
+  | otherwise = val : subBN' xs ys res
   where
     ny
       | y + carry >= 10 = 0
@@ -171,9 +184,6 @@ subBN' (x : xs) (y : ys) carry  = val : subBN' xs ys res
       | otherwise = x + 10 - ny
     res = if x >= ny then nc else 1 + nc
 
--- -22 - 2
--- -2 - 22
-
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
   | isNegBn1 && isNegBn2 = bn1 `somaBN` absBn2
@@ -181,8 +191,8 @@ subBN bn1 bn2
   | isNegBn2 && absBn2 `gtBN` absBn1 = absBn1 `somaBN` absBn2
   | isNegBn2 && absBn2 `ltBN` absBn1 = bn1 `somaBN` absBn2
   | absBn1 `equalsBN` absBn2 = [0]
-  | bn1 `gtBN` bn2 = reverse (subBN' revBn1 revBn2 0)
-  | otherwise = negBN (reverse (subBN' revBn2 revBn1 0))
+  | bn1 `gtBN` bn2 = scanner(output(reverse (subBN' revBn1 revBn2 0)))
+  | otherwise = negBN (scanner(output(reverse (subBN' revBn2 revBn1 0))))
   where
     revBn1 = reverse bn1
     revBn2 = reverse bn2
@@ -227,7 +237,6 @@ mulBN bn1 bn2
 
 -- 2.7
 -- divBN: divide 2 big numbers
-
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN bn1 bn2 =  (quociente,resto)
   where

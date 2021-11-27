@@ -50,15 +50,11 @@ fibListaInfinita n =
 -- *** 3 ***
 
 -- 3.1
--- TODO fix breaking on fib n, n > 9
 fibRecBN' :: BigNumber -> BigNumber
 fibRecBN' bn
-  | output bn == "0" = [1]
-  | output bn == "1" = [1]
-  | otherwise = fibRecBN' out1 `somaBN` fibRecBN' out2
-  where
-    out1 = bn `subBN` [1]
-    out2 = bn `subBN` [2]
+  | bn `equalsBN` [0] = [1]
+  | bn `equalsBN` [1] = [1]
+  | otherwise = fibRecBN' (bn `subBN` [1]) `somaBN` fibRecBN' (bn `subBN` [2])
 
 fibRecBN :: String -> String
 fibRecBN n = output (fibRecBN' (scanner n))
