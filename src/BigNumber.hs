@@ -94,6 +94,24 @@ isNegBN bn = head bn < 0
 isPosBN :: BigNumber -> Bool
 isPosBN bn = head bn > 0
 
+absBN :: BigNumber -> BigNumber
+absBN bn
+ | isNegBN bn = (head bn * (-1)) : drop 1 bn
+ | otherwise = bn
+
+gtBN :: BigNumber -> BigNumber -> Bool
+gtBN bn1 bn2
+  | bn1 `equalsBN` bn2 = False
+  | otherwise = maxBN bn1 bn2 == bn1
+
+ltBN :: BigNumber -> BigNumber -> Bool
+ltBN bn1 bn2
+  | bn1 `equalsBN` bn2 = False
+  | otherwise = maxBN bn1 bn2 == bn2
+
+equalsBN :: BigNumber -> BigNumber -> Bool
+equalsBN bn1 bn2 = bn1 == bn2
+
 -- 2.4
 -- somaBN: sum 2 big numbers
 somaBN' :: Integral t => [t] -> [t] -> t -> [t]
@@ -108,40 +126,62 @@ somaBN' (x : xs) (y : ys) carry = val : somaBN' xs ys res
     val = (x + y + carry) `rem` 10
     res = (x + y + carry) `quot` 10
 
+-- 2 + (-22) = 2 - 22 = -20
+
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN bn1 bn2
-  | isNegBN bn1 || isNegBN bn2 = subBN bn1 bn2
+  | isNegBn1 && isNegBn2 = negBN (absBn1 `somaBN` absBn2)
+  | isNegBn1 && (absBn1 `gtBN` absBn2) = negBN (absBn1 `subBN` absBn2)
+  | isNegBn1 && (absBn1 `ltBN` absBn2) = bn2 `subBN` absBn1 
+  | isNegBn2 && not (absBn1 `equalsBN` absBn2) = bn1 `subBN` absBn2
   | otherwise = reverse (somaBN' (reverse bn1) (reverse bn2) 0)
-
-
--- 01
--- 30
--- 8:
+  where
+    absBn1 = absBN bn1
+    absBn2 = absBN bn2
+    isNegBn1 = isNegBN bn1
+    isNegBn2 = isNegBN bn2
 
 -- 2.5
--- subBN: subtract 2 big numbers
-subBN' :: BigNumber -> BigNumber -> BigNumber
-subBN' bn1 bn2
-    | null bn1 = bn2
-    | null bn2 = bn1
-    | head bigger >= head smallerWithZeros = (head bigger - head smallerWithZeros) : subBN' (reverse (drop 1 smallerWithZeros)) (reverse (drop 1 bigger))
-    | otherwise = ((10 + head bigger) - head smallerWithZeros) : subBN' (drop 1 (reverse bigger)) (reverse smallerWithCarry)
+subBN' :: [Int] -> [Int] -> Int -> [Int]
+subBN' [] x carry
+  | carry == 0 = x
+  | otherwise = []
+subBN' x [] carry
+  | carry == 0 = x
+  | otherwise = []
+
+subBN' (x : xs) (y : ys) carry  = val : subBN' xs ys res
   where
-    bigger = reverse (maxBN bn1 bn2)
-    smaller = reverse (minBN bn1 bn2)
-    smallerWithZeros =  smaller ++ take subLen zeros
-    smallerWithCarry = (smallerWithZeros !! 1 + 1) : drop 2 smallerWithZeros
-    subLen = length bigger - length smaller
-    zeros = [0 | n <- [1..9999]]
+    ny
+      | y + carry >= 10 = 0
+      | otherwise = y + carry
+    nc
+      | y + carry >= 10 = 1
+      | otherwise = 0
+    val
+      | x >= ny =  x - ny
+      | otherwise = x + 10 - ny
+    res = if x >= ny then nc else 1 + nc
+
+-- -22 - 2
+-- -2 - 22
 
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
-  | isZeroBN bn1 = negBN bn2
-  | isZeroBN bn2 = bn1
-  | maxBN bn1 bn2 == bn1 = res
-  | otherwise = negBN res
+  | isNegBn1 && isNegBn2 = bn1 `somaBN` absBn2
+  | isNegBn1 && (absBn1 `gtBN` absBn2) || (absBn1 `ltBN` absBn2) = negBN (absBn1 `somaBN` absBn2)
+  | isNegBn2 && absBn2 `gtBN` absBn1 =  absBn1 `somaBN` absBn2
+  | isNegBn2 && absBn2 `ltBN` absBn1 = bn1 `somaBN` absBn2
+  | absBn1 `equalsBN` absBn2 = [0]
+  | bn1 `gtBN` bn2 = reverse (subBN' revBn1 revBn2 0)
+  | otherwise = negBN(reverse (subBN' revBn2 revBn1 0))
   where
-    res = reverse (subBN' bn1 bn2)
+    revBn1 = reverse bn1
+    revBn2 = reverse bn2
+    absBn1 = absBN bn1
+    absBn2 = absBN bn2
+    isNegBn1 = isNegBN bn1
+    isNegBn2 = isNegBN bn2
 
 -- 2.6
 -- mulBN: multiply 2 big numbers
@@ -154,7 +194,7 @@ mulBN'' a carry bn
   where
     res = if op >= 10 then op `rem` 10 else op
     nextCarry = if op >= 10 then op `div` 10 else 0
-    op = (a * head bn) + carry
+    op = a * head bn + carry
 
 mulBN' :: BigNumber -> BigNumber -> BigNumber
 mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
