@@ -50,14 +50,14 @@ minBN bn1 bn2 = min
       | length bn2 > length bn1 = bn2
       | head bn1 > head bn2 = bn1
       | head bn2 > head bn1 = bn2
-      | otherwise = maxBN (drop 1 bn1) (drop 1 bn2)
+      | otherwise = head bn1 : maxBN (drop 1 bn1) (drop 1 bn2)
     minPos
       | output bn1 == output bn2 = bn1
       | length bn1 < length bn2 = bn1
       | length bn2 < length bn1 = bn2
       | head bn1 < head bn2 = bn1
       | head bn2 < head bn1 = bn2
-      | otherwise = minBN (drop 1 bn1) (drop 1 bn2)
+      | otherwise = head bn1 : minBN (drop 1 bn1) (drop 1 bn2)
 
 maxBN :: BigNumber -> BigNumber -> BigNumber
 maxBN bn1 bn2 = max
@@ -73,14 +73,14 @@ maxBN bn1 bn2 = max
       | length bn2 > length bn1 = bn1
       | head bn1 > head bn2 = bn2
       | head bn2 > head bn1 = bn1
-      | otherwise = minBN (drop 1 bn1) (drop 1 bn2)
+      | otherwise = head bn1 : minBN (drop 1 bn1) (drop 1 bn2)
     maxPos
       | output bn1 == output bn2 = bn1
       | length bn1 > length bn2 = bn1
       | length bn2 > length bn1 = bn2
       | head bn1 > head bn2 = bn1
       | head bn2 > head bn1 = bn2
-      | otherwise = maxBN (drop 1 bn1) (drop 1 bn2)
+      | otherwise = head bn1 : maxBN (drop 1 bn1) (drop 1 bn2)
 
 negBN :: BigNumber -> BigNumber
 negBN bn = (head bn * (-1)) : tail bn
