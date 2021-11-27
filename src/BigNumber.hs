@@ -218,6 +218,7 @@ mulBN bn1 bn2
   | output bn2 == "-1" = negBN bn1
   | isZeroBN bn1 || isZeroBN bn2 = [0]
   | isNegBN bn1 `xor` isNegBN bn2 = negBN (mulBN' (negBN negative) positive)
+  | isNegBN bn1 && isNegBN bn2 =  mulBN' (negBN bn1)  (negBN bn2)
   | otherwise = mulBN' bn1 bn2
   where
     negative = if isNegBN bn1 then bn1 else bn2
