@@ -109,6 +109,16 @@ ltBN bn1 bn2
   | bn1 `equalsBN` bn2 = False
   | otherwise = maxBN bn1 bn2 == bn2
 
+ltEqualBN :: BigNumber -> BigNumber -> Bool
+ltEqualBN bn1 bn2
+  | bn1 `equalsBN` bn2 = True
+  | otherwise = maxBN bn1 bn2 == bn2
+
+gtEqualBN :: BigNumber -> BigNumber -> Bool
+gtEqualBN bn1 bn2
+  | bn1 `equalsBN` bn2 = True
+  | otherwise = maxBN bn1 bn2 == bn1
+
 equalsBN :: BigNumber -> BigNumber -> Bool
 equalsBN bn1 bn2 = bn1 == bn2
 
@@ -132,7 +142,7 @@ somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN bn1 bn2
   | isNegBn1 && isNegBn2 = negBN (absBn1 `somaBN` absBn2)
   | isNegBn1 && (absBn1 `gtBN` absBn2) = negBN (absBn1 `subBN` absBn2)
-  | isNegBn1 && (absBn1 `ltBN` absBn2) = bn2 `subBN` absBn1 
+  | isNegBn1 && (absBn1 `ltBN` absBn2) = bn2 `subBN` absBn1
   | isNegBn2 && not (absBn1 `equalsBN` absBn2) = bn1 `subBN` absBn2
   | otherwise = reverse (somaBN' (reverse bn1) (reverse bn2) 0)
   where
@@ -226,12 +236,20 @@ mulBN bn1 bn2
 
 -- 2.7
 -- divBN: divide 2 big numbers
--- divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
-divBN :: BigNumber -> BigNumber -> [BigNumber]
-divBN bn1 bn2= [mulBN bn x | bn <- repeat bn2, x <- listaInfBN 1]
+divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+divBN bn1 bn2 =  (quociente,resto)
+  where
+    multiplesListInf = [mulBN bn x | bn <- repeat bn2, x <- listaInfBN [1]]
+    multiplesList = takeWhile (`ltEqualBN` bn1 ) multiplesListInf
+    lastMultiple = last multiplesList
+    quociente = scanner (show (length multiplesList))
+    resto     = scanner (output (bn1 `subBN` lastMultiple))
 
 
-listaInfBN :: Int -> [BigNumber]
-listaInfBN n = [n] : listaInfBN (n + 1)
+-- resto bn1 bn2 = bn1 `subBN` quociente
+
+listaInfBN :: BigNumber -> [BigNumber]
+listaInfBN n = n : listaInfBN (n `somaBN` [1])
+
 
