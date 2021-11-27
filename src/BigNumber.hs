@@ -39,9 +39,9 @@ output bn
 minBN :: BigNumber -> BigNumber -> BigNumber
 minBN bn1 bn2 = min
   where
-    min 
-      | isNegBN bn1 && isNegBN bn2  =  minNeg 
-      | isNegBN bn1  =  bn1 
+    min
+      | isNegBN bn1 && isNegBN bn2  =  minNeg
+      | isNegBN bn1  =  bn1
       | isNegBN bn2  =  bn2
       | otherwise = minPos
     minNeg
@@ -62,9 +62,9 @@ minBN bn1 bn2 = min
 maxBN :: BigNumber -> BigNumber -> BigNumber
 maxBN bn1 bn2 = max
   where
-    max 
-      | isNegBN bn1 && isNegBN bn2  =  maxNeg 
-      | isNegBN bn1  =  bn2 
+    max
+      | isNegBN bn1 && isNegBN bn2  =  maxNeg
+      | isNegBN bn1  =  bn2
       | isNegBN bn2  =  bn1
       | otherwise = maxPos
     maxNeg
@@ -113,6 +113,11 @@ somaBN bn1 bn2
   | isNegBN bn1 || isNegBN bn2 = subBN bn1 bn2
   | otherwise = reverse (somaBN' (reverse bn1) (reverse bn2) 0)
 
+
+-- 01
+-- 30
+-- 8:
+
 -- 2.5
 -- subBN: subtract 2 big numbers
 subBN' :: BigNumber -> BigNumber -> BigNumber
@@ -120,20 +125,20 @@ subBN' bn1 bn2
     | null bn1 = bn2
     | null bn2 = bn1
     | head bigger >= head smallerWithZeros = (head bigger - head smallerWithZeros) : subBN' (reverse (drop 1 smallerWithZeros)) (reverse (drop 1 bigger))
-    | otherwise = (10 + head bigger - head smallerWithZeros) : subBN' biggerWithCarry (drop 1 (reverse smaller))
+    | otherwise = ((10 + head bigger) - head smallerWithZeros) : subBN' (drop 1 (reverse bigger)) (reverse smallerWithCarry)
   where
     bigger = reverse (maxBN bn1 bn2)
     smaller = reverse (minBN bn1 bn2)
     smallerWithZeros =  smaller ++ take subLen zeros
+    smallerWithCarry = (smallerWithZeros !! 1 + 1) : drop 2 smallerWithZeros
     subLen = length bigger - length smaller
-    biggerWithCarry = ((drop 1 bigger !! 1) + 1) : drop 2 bigger
     zeros = [0 | n <- [1..9999]]
 
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
   | isZeroBN bn1 = negBN bn2
   | isZeroBN bn2 = bn1
-  | max bn1 bn2 == bn1 = res
+  | maxBN bn1 bn2 == bn1 = res
   | otherwise = negBN res
   where
     res = reverse (subBN' bn1 bn2)
