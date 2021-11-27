@@ -194,7 +194,8 @@ subBN bn1 bn2
 -- mulBN: multiply 2 big numbers
 mulBN'' :: Int -> Int -> BigNumber -> BigNumber
 mulBN'' a carry bn
-  | null bn = bn
+  | null bn && carry == 0 = bn
+  | null bn = [carry]
   | a == 0 = [0 | i <- bn]
   | a == 1 = bn
   | otherwise = res : mulBN'' a nextCarry (drop 1 bn)
@@ -227,7 +228,7 @@ mulBN bn1 bn2
 -- divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
 divBN :: BigNumber -> BigNumber -> [BigNumber]
-divBN bn1 bn2= [mulBN bn x | bn <- repeat bn1, x <- listaInfBN 1]
+divBN bn1 bn2= [mulBN bn x | bn <- repeat bn2, x <- listaInfBN 1]
 
 
 listaInfBN :: Int -> [BigNumber]
