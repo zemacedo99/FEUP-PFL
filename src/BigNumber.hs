@@ -183,6 +183,13 @@ subBN bn1 bn2
     isNegBn1 = isNegBN bn1
     isNegBn2 = isNegBN bn2
 
+
+--       100
+--        20
+--       000
+--      2000
+
+
 -- 2.6
 -- mulBN: multiply 2 big numbers
 mulBN'' :: Int -> Int -> BigNumber -> BigNumber
@@ -206,8 +213,8 @@ mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
 
 mulBN :: BigNumber -> BigNumber -> BigNumber
 mulBN bn1 bn2
-  | output bn1 == "-1" = head bn2 * (-1) : drop 1 bn2
-  | output bn2 == "-1" = head bn1 * (-1) : drop 1 bn1
+  | output bn1 == "-1" = negBN bn2
+  | output bn2 == "-1" = negBN bn1
   | isZeroBN bn1 || isZeroBN bn2 = [0]
   | isNegBN bn1 `xor` isNegBN bn2 = negBN (mulBN' (negBN negative) positive)
   | otherwise = mulBN' bn1 bn2
@@ -220,29 +227,9 @@ mulBN bn1 bn2
 -- divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 
 divBN :: BigNumber -> BigNumber -> [BigNumber]
-divBN bn1 bn2= [mulBN bn x| bn <- repeat bn1, x <- listaInfBN 1,  maxBN (mulBN bn x) bn2 == mulBN bn x]
+divBN bn1 bn2= [mulBN bn x | bn <- repeat bn1, x <- listaInfBN 1]
 
 
 listaInfBN :: Int -> [BigNumber]
 listaInfBN n = [n] : listaInfBN (n + 1)
-
-
--- divBN []  bn2 = ([],[])
--- divBN bn1 [] = ([],[])
--- divBN bn1 bn2
---   | maxBN bn1 bn2 == bn1 = (quo,res)
---   | otherwise = ([],bn1)
-
---   where
---         newDivisor = if res /= [0] then head res : drop 1 divisor else drop 1 divisor
---         quo =  (head divisor `div` head bn2) : fst (divBN newDivisor bn2)
---         res =  [head divisor `mod` head bn2]
---         divisor = if head bn1 < head bn2
---                   then (head bn1 * 10 + head (tail bn1)) : drop 1 (tail bn1)
---                   else bn1
-
--- todo: divBN [9,2,1] [2] = [4,6] errado e  divBN [9,2,9] [2] = [4,6,4] certo why? o mesmo acontece para quando 20 / 2
--- todo: divBN divBN [9,2,2] [2] da resto 1 e devia dar resto 0
--- todo: divisor fazer o then recursivo até divisor >= head bn2 
--- todo: fazer um dividendo como o divisor para nao usar head bn2 s 
 
