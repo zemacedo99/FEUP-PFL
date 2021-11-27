@@ -169,12 +169,12 @@ subBN' (x : xs) (y : ys) carry  = val : subBN' xs ys res
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
   | isNegBn1 && isNegBn2 = bn1 `somaBN` absBn2
-  | isNegBn1 && (absBn1 `gtBN` absBn2) || (absBn1 `ltBN` absBn2) = negBN (absBn1 `somaBN` absBn2)
-  | isNegBn2 && absBn2 `gtBN` absBn1 =  absBn1 `somaBN` absBn2
+  | isNegBn1 && ((absBn1 `gtBN` absBn2) || (absBn1 `ltBN` absBn2)) = negBN (absBn1 `somaBN` absBn2)
+  | isNegBn2 && absBn2 `gtBN` absBn1 = absBn1 `somaBN` absBn2
   | isNegBn2 && absBn2 `ltBN` absBn1 = bn1 `somaBN` absBn2
   | absBn1 `equalsBN` absBn2 = [0]
   | bn1 `gtBN` bn2 = reverse (subBN' revBn1 revBn2 0)
-  | otherwise = negBN(reverse (subBN' revBn2 revBn1 0))
+  | otherwise = negBN (reverse (subBN' revBn2 revBn1 0))
   where
     revBn1 = reverse bn1
     revBn2 = reverse bn2
