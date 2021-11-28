@@ -191,7 +191,7 @@ subBN' (x : xs) (y : ys) carry =  val : subBN' xs ys res
       | otherwise = x + 10 - ny
     res = if x >= ny then nc else 1 + nc
 
--- | subBN': checks base cases for subtraction operation and calls the appropriate functions to 
+-- | subBN: checks base cases for subtraction operation and calls the appropriate functions to 
 --           execute the operation (either somaBN or subBN') 
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2

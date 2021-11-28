@@ -45,7 +45,7 @@ fibLista n = fibLista !! n
 --                      Uses the function **zipWith** to do that.
 fibListaInfinita :: Num a => Int -> a
 fibListaInfinita n =
-  let fib = 0 : 1 : zipWith (+) fib (tail fib)
+  let fib = 1 : 1 : zipWith (+) fib (tail fib)
    in fib !! n
 
 -- *** 3 ***
@@ -64,8 +64,8 @@ fibRecBN n = output (fibRecBN' (scanner n))
 
 -- 3.2
 -- | fibListaBN: 
-fibListaBN :: Int -> BigNumber
-fibListaBN n = lista !! n
+fibListaBN :: Int -> String
+fibListaBN n = output (lista !! n)
   where
     lista = [1] : [1] : map fib (listaInfBN [2])
     fib n = (lista !! read (output (n `subBN` [2])))`somaBN` (lista !! read (output (n `subBN` [1])))
@@ -74,7 +74,7 @@ fibListaBN n = lista !! n
 -- | fibListaInfinitaBN': 
 fibListaInfinitaBN' :: Int -> BigNumber
 fibListaInfinitaBN' n =
-  let fib = [0] : [1] : zipWith somaBN fib (tail fib)
+  let fib = [1] : [1] : zipWith somaBN fib (tail fib)
    in fib !! n
 
 -- | fibListaInfinitaBN: 
