@@ -14,7 +14,7 @@ import BigNumber
 -- *** 1 ***
 
 -- 1.1
--- Normal recursion algorythm for fibonacci
+-- | fibRec: normal recursion algorythm for Fibonacci. Two base cases and two recursion calls.
 fibRec :: (Integral a) => a -> a
 fibRec n
   | n == 0 = 1
@@ -22,17 +22,17 @@ fibRec n
   | otherwise = fibRec (n - 1) + fibRec (n - 2)
 
 -- 1.2
--- Using fold to write it can ensure that the compiler optimizes the recursion without bursting the stack.
--- At the same time, in my opinion, the fold process reflects the change of state. The initial state is
--- calculated step by step to get the final state, which is in line with the idea of ​​dynamic programming,
--- so I think this is a recursive form of dynamic programming in functional programming.
-
+-- | fibLista2: In this version of FibLista, we use the function **foldl** so we can access the 
+--               partial results of the list without needing to wait for the whole processing.
+--               It also ensures compiler optimization without bursting the stack.
 fibLista2' :: Num b => (b, b) -> p -> (b, b)
 fibLista2' (a, b) _ = (b, a + b)
 
 fibLista2 :: Num b => Int -> b
 fibLista2 n = snd (foldl fibLista2' (1, 1) (replicate (n - 1) 0))
 
+-- | fibLista: Calculates the nth Fibonacci number using the higher order function **map** to 
+--             create the Fibonacci list and the index operator **!!** to access the partial result, which is the nth number.
 fibLista :: Num a => Int -> a
 fibLista n = fibLista !! n
   where
@@ -40,9 +40,9 @@ fibLista n = fibLista !! n
     f n = fibLista !! (n - 1) + fibLista !! (n - 2)
 
 -- 1.3
--- Calculates an infinite list of fibonnacci numbers by producing the list of corresponding sums
--- of the ever growing fibonnacci list with its tail
-
+-- | fibListaInfinita:  Calculates an infinite list of Fibonnacci numbers by producing the list of 
+--                      corresponding sums of the ever growing Fibonnacci list with its tail. 
+--                      Uses the function **zipWith** to do that.
 fibListaInfinita :: Num a => Int -> a
 fibListaInfinita n =
   let fib = 0 : 1 : zipWith (+) fib (tail fib)
@@ -51,16 +51,19 @@ fibListaInfinita n =
 -- *** 3 ***
 
 -- 3.1
+-- | fibRecBN': 
 fibRecBN' :: BigNumber -> BigNumber
 fibRecBN' bn
   | bn `equalsBN` [0] = [1]
   | bn `equalsBN` [1] = [1]
   | otherwise = fibRecBN' (bn `subBN` [1]) `somaBN` fibRecBN' (bn `subBN` [2])
 
+-- | fibRecBN: 
 fibRecBN :: String -> String
 fibRecBN n = output (fibRecBN' (scanner n))
 
 -- 3.2
+-- | fibListaBN: 
 fibListaBN :: Int -> BigNumber
 fibListaBN n = lista !! n
   where
@@ -68,10 +71,12 @@ fibListaBN n = lista !! n
     fib n = (lista !! read (output (n `subBN` [2])))`somaBN` (lista !! read (output (n `subBN` [1])))
 
 -- 3.3
+-- | fibListaInfinitaBN': 
 fibListaInfinitaBN' :: Int -> BigNumber
 fibListaInfinitaBN' n =
   let fib = [0] : [1] : zipWith somaBN fib (tail fib)
    in fib !! n
 
+-- | fibListaInfinitaBN: 
 fibListaInfinitaBN :: Int -> String
 fibListaInfinitaBN n = output (fibListaInfinitaBN' n)
