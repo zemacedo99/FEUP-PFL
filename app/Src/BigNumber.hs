@@ -8,7 +8,7 @@
 -- Stability   : experimental
 -- Portability : POSIX.
 module BigNumber where
-
+  
 import Utils ( truncateString, xor )
 
 -- *** 2 ***
@@ -18,7 +18,7 @@ import Utils ( truncateString, xor )
 type BigNumber = [Int]
 
 -- 2.2
--- | scanner: convert string into big number
+-- | scanner: converts String into BN
 scanner :: String -> BigNumber
 scanner str
   | isNegativeNumber = head bigNumber * (-1) : tail bigNumber
@@ -30,7 +30,7 @@ scanner str
     bigNumber = map (read . (: "")) numberStr :: BigNumber
 
 -- 2.3
--- | output: convert big number into string
+-- | output: converts BN into String
 output :: BigNumber -> String
 output bn
   | isNegBN bn = "-" ++ show (head bn * (-1)) ++ [head (show digit) | digit <- drop 1 bn]
@@ -108,35 +108,38 @@ absBN bn
  | isNegBN bn = (head bn * (-1)) : drop 1 bn
  | otherwise = bn
 
--- | gtBN: checks if a BN is positive. If it is, returns True.
+-- | gtBN: checks if the first BN is bigger than the second BN. If it is, returns True.
 gtBN :: BigNumber -> BigNumber -> Bool
 gtBN bn1 bn2
   | bn1 `equalsBN` bn2 = False
   | otherwise = maxBN bn1 bn2 == bn1
 
+-- | ltBN: checks if the first BN is lesser than the second BN. If it is, returns True.
 ltBN :: BigNumber -> BigNumber -> Bool
 ltBN bn1 bn2
   | bn1 `equalsBN` bn2 = False
   | otherwise = maxBN bn1 bn2 == bn2
 
+-- | gtEqualBN: checks if the first BN is bigger than or equal to the second BN. If it is, 
+--              returns True.
+gtEqualBN :: BigNumber -> BigNumber -> Bool
+gtEqualBN bn1 bn2
+  | bn1 `equalsBN` bn2 = True
+  | otherwise = maxBN bn1 bn2 == bn1
+  
+-- | ltEqualBN: checks if the first BN is lesser than or equal to the second BN. If it is, 
+--              returns True.
 ltEqualBN :: BigNumber -> BigNumber -> Bool
 ltEqualBN bn1 bn2
   | bn1 `equalsBN` bn2 = True
   | otherwise = maxBN bn1 bn2 == bn2
 
-gtEqualBN :: BigNumber -> BigNumber -> Bool
-gtEqualBN bn1 bn2
-  | bn1 `equalsBN` bn2 = True
-  | otherwise = maxBN bn1 bn2 == bn1
-
+-- | equalsBN: checks if the first BN is equal to the second BN. If it is, returns True.
 equalsBN :: BigNumber -> BigNumber -> Bool
 equalsBN bn1 bn2 = bn1 == bn2
 
-listaInfBN :: BigNumber -> [BigNumber]
-listaInfBN n = n : listaInfBN (n `somaBN` [1])
-
 -- 2.4
--- somaBN: sum 2 big numbers
+-- | somaBN': sums 2 BNs recursively using carry
 somaBN' :: Integral t => [t] -> [t] -> t -> [t]
 somaBN' [] x carry
   | carry == 0 = x
@@ -149,6 +152,8 @@ somaBN' (x : xs) (y : ys) carry = val : somaBN' xs ys res
     val = (x + y + carry) `rem` 10
     res = (x + y + carry) `quot` 10
 
+-- | somaBN: checks base cases for sum operation and calls the appropriate functions to execute 
+--           the operation (either somaBN' or subBN) 
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN bn1 bn2
   | isNegBn1 && isNegBn2 = negBN (absBn1 `somaBN` absBn2)
@@ -157,12 +162,13 @@ somaBN bn1 bn2
   | isNegBn2 && not (absBn1 `equalsBN` absBn2) = bn1 `subBN` absBn2
   | otherwise = reverse (somaBN' (reverse bn1) (reverse bn2) 0)
   where
-    absBn1 = absBN bn1
     absBn2 = absBN bn2
+    absBn1 = absBN bn1
     isNegBn1 = isNegBN bn1
     isNegBn2 = isNegBN bn2
 
 -- 2.5
+-- | subBN': subtracts 2 BNs recursively using carry
 subBN' :: [Int] -> [Int] -> Int -> [Int]
 subBN' [] x carry
   | carry == 0 = x
@@ -185,6 +191,8 @@ subBN' (x : xs) (y : ys) carry =  val : subBN' xs ys res
       | otherwise = x + 10 - ny
     res = if x >= ny then nc else 1 + nc
 
+-- | subBN': checks base cases for subtraction operation and calls the appropriate functions to 
+--           execute the operation (either somaBN or subBN') 
 subBN :: BigNumber -> BigNumber -> BigNumber
 subBN bn1 bn2
   | isNegBn1 && isNegBn2 = bn1 `somaBN` absBn2
@@ -203,7 +211,7 @@ subBN bn1 bn2
     isNegBn2 = isNegBN bn2
 
 -- 2.6
--- mulBN: multiply 2 big numbers
+-- | mulBN'': multiplies 2 BNs recursively using carry 
 mulBN'' :: Int -> Int -> BigNumber -> BigNumber
 mulBN'' a carry bn
   | null bn && carry == 0 = bn
@@ -216,6 +224,7 @@ mulBN'' a carry bn
     nextCarry = if op >= 10 then op `div` 10 else 0
     op = a * head bn + carry
 
+-- | mulBN': multiplies 2 BNs using comprehension lists 
 mulBN' :: BigNumber -> BigNumber -> BigNumber
 mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
   where
@@ -224,6 +233,7 @@ mulBN' bn1 bn2 = foldl somaBN [0] resMulZeros
     resMulZeros = head resMul : [resMul !! i ++ replicate i 0 | i <- [0..length resMul - 1], i > 0]
     resMul = [reverse (mulBN'' a 0 rbn1) | a <- rbn2]
 
+-- | mulBN: checks base cases for multiplication operation and calls then calls mulBN'
 mulBN :: BigNumber -> BigNumber -> BigNumber
 mulBN bn1 bn2
   | output bn1 == "-1" = negBN bn2
@@ -237,7 +247,8 @@ mulBN bn1 bn2
     positive = if isNegBN bn1 then bn2 else bn1
 
 -- 2.7
--- divBN: divide 2 big numbers
+-- divBN: divides 2 BNs using comprehension list with multiples of the divisor. Uses the function 
+--        takeWhile and ltEqualBN to stop the list generation. 
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN bn1 bn2 
   | bn1 `gtEqualBN` bn2 = (quociente,resto)
@@ -250,6 +261,12 @@ divBN bn1 bn2
     quociente = scanner (show (length multiplesList))
     resto     = scanner (output (bn1 `subBN` lastMultiple))
 
+listaInfBN :: BigNumber -> [BigNumber]
+listaInfBN n = n : listaInfBN (n `somaBN` [1])
+
+-- 5
+-- | safeDivBN: ensures that divBN can divide a BN with zero, using Monad of Maybe type. 
+--              When bn2 is zero, it returns Nothing. Otherwise, it calls divBN.
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
 safeDivBN bn1 bn2
   | isZeroBN bn2 = Nothing 
