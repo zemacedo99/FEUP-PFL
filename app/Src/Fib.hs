@@ -7,8 +7,9 @@
 -- Stability   : experimental
 -- Portability : POSIX.
 module Fib where
+
 import BigNumber
-import Utils
+    ( equalsBN, listaInfBN, output, scanner, somaBN, subBN, BigNumber )
 
 -- *** 1 ***
 

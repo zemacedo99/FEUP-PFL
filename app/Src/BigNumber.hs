@@ -9,7 +9,7 @@
 -- Portability : POSIX.
 module BigNumber where
 
-import Utils
+import Utils ( truncateString, xor )
 
 -- *** 2 ***
 
@@ -18,7 +18,7 @@ import Utils
 type BigNumber = [Int]
 
 -- 2.2
--- scanner: convert string into big number
+-- | scanner: convert string into big number
 scanner :: String -> BigNumber
 scanner str
   | isNegativeNumber = head bigNumber * (-1) : tail bigNumber
@@ -30,13 +30,15 @@ scanner str
     bigNumber = map (read . (: "")) numberStr :: BigNumber
 
 -- 2.3
--- output: convert big number into string
+-- | output: convert big number into string
 output :: BigNumber -> String
 output bn
   | isNegBN bn = "-" ++ show (head bn * (-1)) ++ [head (show digit) | digit <- drop 1 bn]
   | otherwise = [head (show digit) | digit <- bn]
 
--- AUX
+-- Auxiliar Functions for BigNumbers
+
+-- | minBN: returns the smaller BN between two.
 minBN :: BigNumber -> BigNumber -> BigNumber
 minBN bn1 bn2 = min
   where
@@ -60,6 +62,7 @@ minBN bn1 bn2 = min
       | head bn2 < head bn1 = bn2
       | otherwise = head bn1 : minBN (drop 1 bn1) (drop 1 bn2)
 
+-- | maxBN: returns the bigger BN between two.
 maxBN :: BigNumber -> BigNumber -> BigNumber
 maxBN bn1 bn2 = max
   where
@@ -83,23 +86,29 @@ maxBN bn1 bn2 = max
       | head bn2 > head bn1 = bn2
       | otherwise = head bn1 : maxBN (drop 1 bn1) (drop 1 bn2)
 
+-- | negBN: returns the BN with opposite parity.
 negBN :: BigNumber -> BigNumber
 negBN bn = (head bn * (-1)) : tail bn
 
+-- | isZeroBN: checks if a BN is zero. If it is, returns True.
 isZeroBN :: BigNumber -> Bool
 isZeroBN bn = sum bn == 0
 
+-- | isNegBN: checks if a BN is negative. If it is, returns True.
 isNegBN :: BigNumber -> Bool
 isNegBN bn = head bn < 0
 
+-- | isPosBN: checks if a BN is positive. If it is, returns True.
 isPosBN :: BigNumber -> Bool
 isPosBN bn = head bn > 0
 
+-- | absBN: returns the absolute value of the BN.
 absBN :: BigNumber -> BigNumber
 absBN bn
  | isNegBN bn = (head bn * (-1)) : drop 1 bn
  | otherwise = bn
 
+-- | gtBN: checks if a BN is positive. If it is, returns True.
 gtBN :: BigNumber -> BigNumber -> Bool
 gtBN bn1 bn2
   | bn1 `equalsBN` bn2 = False
@@ -122,6 +131,9 @@ gtEqualBN bn1 bn2
 
 equalsBN :: BigNumber -> BigNumber -> Bool
 equalsBN bn1 bn2 = bn1 == bn2
+
+listaInfBN :: BigNumber -> [BigNumber]
+listaInfBN n = n : listaInfBN (n `somaBN` [1])
 
 -- 2.4
 -- somaBN: sum 2 big numbers
@@ -237,10 +249,6 @@ divBN bn1 bn2
     lastMultiple = last multiplesList
     quociente = scanner (show (length multiplesList))
     resto     = scanner (output (bn1 `subBN` lastMultiple))
-
-listaInfBN :: BigNumber -> [BigNumber]
-listaInfBN n = n : listaInfBN (n `somaBN` [1])
-
 
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
 safeDivBN bn1 bn2
