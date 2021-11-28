@@ -51,19 +51,19 @@ fibListaInfinita n =
 -- *** 3 ***
 
 -- 3.1
--- | fibRecBN': 
+-- | fibRecBN: normal fibonnacci recursion using BigNumber type
 fibRecBN' :: BigNumber -> BigNumber
 fibRecBN' bn
   | bn `equalsBN` [0] = [1]
   | bn `equalsBN` [1] = [1]
   | otherwise = fibRecBN' (bn `subBN` [1]) `somaBN` fibRecBN' (bn `subBN` [2])
 
--- | fibRecBN: 
 fibRecBN :: String -> String
 fibRecBN n = output (fibRecBN' (scanner n))
 
 -- 3.2
--- | fibListaBN: 
+-- | fibListaBN: Optimized version of the recussive fibonnaci using a memoized list of results 
+--               and lazy evaluation
 fibListaBN :: Int -> String
 fibListaBN n = output (lista !! n)
   where
@@ -71,12 +71,12 @@ fibListaBN n = output (lista !! n)
     fib n = (lista !! read (output (n `subBN` [2])))`somaBN` (lista !! read (output (n `subBN` [1])))
 
 -- 3.3
--- | fibListaInfinitaBN': 
+-- | fibListaInfinitaBN: generalises zip by zipping with the function given as the first argument, 
+--                       instead of a tupling function to create an infinite list of BigNumber fibonnacci sequence
 fibListaInfinitaBN' :: Int -> BigNumber
 fibListaInfinitaBN' n =
   let fib = [1] : [1] : zipWith somaBN fib (tail fib)
    in fib !! n
 
--- | fibListaInfinitaBN: 
 fibListaInfinitaBN :: Int -> String
 fibListaInfinitaBN n = output (fibListaInfinitaBN' n)
