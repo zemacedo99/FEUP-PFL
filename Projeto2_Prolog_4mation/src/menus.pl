@@ -55,7 +55,7 @@ menu_option(0):-
 menu_option(1):-
     % initial_board(Board),
     initial_state(7,Board),
-    display_game(Board).
+    display_game(Board),
     display_make_a_move(RowIndex,SpaceIndex),
     write(RowIndex),
     write(SpaceIndex).

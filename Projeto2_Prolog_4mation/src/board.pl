@@ -13,26 +13,27 @@
 
 %initial_state(+Size, -GameState)
 
-initial_state(0,GameState).
+initial_state(0,_).
 
 initial_state(Size,GameState):-
+    Piece = ' ',
     NewSize is Size - 1,
-    make_row(NewSize,['X'],Row),
+    make_row(NewSize,Piece,[Piece],Row),
     make_board(NewSize,Row,[Row],GameState).
 
-make_board(0,Row,GameState,GameState).
+make_board(0,_,GameState,GameState).
 
 make_board(Size,Row,CurrentBoard,GameState):-
     append(CurrentBoard,[Row], NewBoard),
     NewSize is Size - 1,
     make_board(NewSize,Row,NewBoard,GameState).
 
-make_row(0,Row,Row).
+make_row(0,_,Row,Row).
 
-make_row(Size,CurrentRow,Row):-
-    append(CurrentRow,['X'], NewRow),
+make_row(Size,Piece,CurrentRow,Row):-
+    append(CurrentRow,[Piece], NewRow),
     NewSize is Size - 1,
-    make_row(NewSize,NewRow,Row).
+    make_row(NewSize,Piece,NewRow,Row).
 
 
 
@@ -83,7 +84,7 @@ print_rows([Row | OtherRows], RowIndex):-
 print_row([], _ ):-
     write('|\n'). 
 
-print_row([ElementPiece | RestRow], Element):-
+print_row([ _ | RestRow], Element):-
     print_element(Element),
     print_row(RestRow,Element).
 
