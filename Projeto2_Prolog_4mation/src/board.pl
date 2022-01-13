@@ -12,13 +12,14 @@
 
 %initial_state(+Size, -GameState)
 
+initial_state(0,GameState).
+
 initial_state(Size,GameState):-
     NewSize is Size - 1,
     make_row(NewSize,['_'],Row),
     make_board(NewSize,Row,[Row],GameState).
 
-make_board(0,Row,CurrentBoard,GameState):- 
-    GameState = CurrentBoard, !.
+make_board(0,Row,GameState,GameState).
 
 make_board(Size,Row,CurrentBoard,GameState):-
     append(CurrentBoard,[Row], NewBoard),
@@ -39,9 +40,18 @@ make_row(Size,CurrentRow,Row):-
 
 display_game(Board):-
     write('\n\n\n'),
-    write(' _____________\n'),
+    length(Board,Length),
+    print_line(Length),
     print_rows(Board,0),
     write('\n\n\n').
+
+print_line(0):-
+    write('\n').
+
+print_line(Length):-
+    write(' _'),
+    NewLenght is Length - 1,
+    print_line(NewLenght).
 
 print_rows([], _ ):- !.
 
