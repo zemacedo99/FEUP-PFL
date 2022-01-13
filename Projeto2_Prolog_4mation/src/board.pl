@@ -26,7 +26,7 @@ make_board(Size,Row,CurrentBoard,GameState):-
     NewSize is Size - 1,
     make_board(NewSize,Row,NewBoard,GameState).
 
-make_row(0,CurrentRow,Row):- Row = CurrentRow, !.
+make_row(0,Row,Row).
 
 make_row(Size,CurrentRow,Row):-
     append(CurrentRow,['_'], NewRow),
