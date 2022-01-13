@@ -28,6 +28,21 @@ display_not_implemented:-
     write('-----------------------------------\n'),
     read_menu_option.
 
+display_make_a_move(RowIndex,SpaceIndex):-
+    write('-----------------------------------\n'),
+    write('-----                         -----\n'),
+    write('-----    Chose a Row to play  -----\n'),
+    write('-----                         -----\n'),
+    write('-----------------------------------\n'),
+    read(RowIndex),
+    write('-----------------------------------\n'),
+    write('-----                         -----\n'),
+    write('-----    Chose a empty space  -----\n'),
+    write('-----          to play        -----\n'),
+    write('-----                         -----\n'),
+    write('-----------------------------------\n'),
+    read(SpaceIndex).
+
 read_menu_option:-
     read(Option),
     menu_option(Option).
@@ -40,7 +55,10 @@ menu_option(0):-
 menu_option(1):-
     % initial_board(Board),
     initial_state(7,Board),
-    display_game(Board).
+    display_game(Board),
+    display_make_a_move(RowIndex,SpaceIndex),
+    write(RowIndex),
+    write(SpaceIndex).
     
 /*Human vs PC*/
 menu_option(2):-
