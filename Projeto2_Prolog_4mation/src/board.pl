@@ -44,10 +44,10 @@ display_game(Board):-
     length(Board,Length),
     print_line(Length),
     print_rows(Board,0),
-    print_column(Length),
+    print_column_number(Length),
     write('\n\n\n').
 
-print_column(Length):-
+print_column_number(Length):-
     RealLength is Length - 1,
     findall(Element, between(0, RealLength, Element), List),
     print_column_element(List).
@@ -56,29 +56,33 @@ print_column_element([]):-
     write('\n').
 
 print_column_element([Element | OtherElements]):-
-    write(' '),
+    write('  '),
     write(Element),
+    write(' '),
     print_column_element(OtherElements).
 
 print_line(0):-
     write('\n').
 
 print_line(Length):-
-    write(' _'),
+    write(' ___'),
     NewLenght is Length - 1,
     print_line(NewLenght).
 
-print_rows([], _ ):- !.
+print_rows([], _ ):- 
+    write('\n').
 
 print_rows([Row | OtherRows], RowIndex):-
+    print_slash_row(Row),
     print_pieces(Row, 0),
-    write('|'),
     write(RowIndex),
     write('\n'),
+    print_empty_row(Row),
     NextRowIndex is RowIndex + 1,
     print_rows(OtherRows, NextRowIndex).
 
-print_pieces([], _ ):- !. 
+print_pieces([], _ ):-
+    write('|'). 
 
 print_pieces([Piece | RestRow], PieceIndex):-
     print_piece(Piece),
@@ -87,8 +91,38 @@ print_pieces([Piece | RestRow], PieceIndex):-
 
 print_piece(Piece):-
     write('|'),
-    write(Piece).
+    write(' '),
+    write('X'),  % mudar para piece
+    write(' ').
 
+print_empty_row([]):-
+    write('|\n').
+
+print_empty_row([EmptyPiece | RestRow]):-
+    print_empty_piece,
+    print_empty_row(RestRow).
+
+print_empty_piece:-
+    write('|'),
+    write('_'),
+    write('_'),
+    write('_').
+
+print_slash_row([]):-
+    write('|\n').
+
+print_slash_row([SlashPiece | RestRow]):-
+    print_slash_piece,
+    print_slash_row(RestRow).
+
+print_slash_piece:-
+    write('|'),
+    write(' '),
+    write(' '),
+    write(' ').
+    
+    
+    
 
 %get_piece
 %place_piece
