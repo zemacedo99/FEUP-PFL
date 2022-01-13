@@ -1,4 +1,5 @@
 :- consult('board.pl').
+:- consult('utils.pl').
 
 display_main_menu:-
     write('-----------------------------------\n'),
@@ -28,7 +29,7 @@ display_not_implemented:-
     write('-----------------------------------\n'),
     read_menu_option.
 
-display_make_a_move(RowIndex,SpaceIndex):-
+display_make_a_move(RowIndex,ElementIndex):-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----    Chose a Row to play  -----\n'),
@@ -41,7 +42,7 @@ display_make_a_move(RowIndex,SpaceIndex):-
     write('-----          to play        -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(SpaceIndex).
+    read(ElementIndex).
 
 read_menu_option:-
     read(Option),
@@ -56,9 +57,8 @@ menu_option(1):-
     % initial_board(Board),
     initial_state(7,Board),
     display_game(Board),
-    display_make_a_move(RowIndex,SpaceIndex),
-    write(RowIndex),
-    write(SpaceIndex).
+    display_make_a_move(RowIndex,ElementIndex),
+    valid_move(Board,RowIndex,ElementIndex).
     
 /*Human vs PC*/
 menu_option(2):-
@@ -75,3 +75,9 @@ menu_option(4):-
 /* Exit option */
 menu_option(5):-
     write('Exiting game...\n').
+
+valid_move(Board,RowIndex,ElementIndex):-
+    getRow(RowIndex, Board, Row),
+    getElement(ElementIndex, Row, Element),
+    Element == ' ',
+    write(Element).
