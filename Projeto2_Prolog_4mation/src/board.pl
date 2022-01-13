@@ -17,7 +17,7 @@ initial_state(0,GameState).
 
 initial_state(Size,GameState):-
     NewSize is Size - 1,
-    make_row(NewSize,['_'],Row),
+    make_row(NewSize,['X'],Row),
     make_board(NewSize,Row,[Row],GameState).
 
 make_board(0,Row,GameState,GameState).
@@ -30,7 +30,7 @@ make_board(Size,Row,CurrentBoard,GameState):-
 make_row(0,Row,Row).
 
 make_row(Size,CurrentRow,Row):-
-    append(CurrentRow,['_'], NewRow),
+    append(CurrentRow,['X'], NewRow),
     NewSize is Size - 1,
     make_row(NewSize,NewRow,Row).
 
@@ -56,16 +56,16 @@ print_column_element([]):-
     write('\n').
 
 print_column_element([Element | OtherElements]):-
-    write('  '),
+    write('   '),
     write(Element),
-    write(' '),
+    write('  '),
     print_column_element(OtherElements).
 
 print_line(0):-
     write('\n').
 
 print_line(Length):-
-    write(' ___'),
+    write(' _____'),
     NewLenght is Length - 1,
     print_line(NewLenght).
 
@@ -73,13 +73,32 @@ print_rows([], _ ):-
     write('\n').
 
 print_rows([Row | OtherRows], RowIndex):-
-    print_slash_row(Row),
+    print_row(Row,' '),
     print_pieces(Row, 0),
-    write(RowIndex),
-    write('\n'),
-    print_empty_row(Row),
+    print_row_index(RowIndex),
+    print_row(Row,'_'),
     NextRowIndex is RowIndex + 1,
     print_rows(OtherRows, NextRowIndex).
+
+print_row([], _ ):-
+    write('|\n'). 
+
+print_row([ElementPiece | RestRow], Element):-
+    print_element(Element),
+    print_row(RestRow,Element).
+
+print_element(Element):-
+    write('|'),
+    write(Element),
+    write(Element),
+    write(Element),
+    write(Element),  
+    write(Element).
+
+print_row_index(RowIndex):-
+    write('  '),
+    write(RowIndex),
+    write('\n').
 
 print_pieces([], _ ):-
     write('|'). 
@@ -91,35 +110,9 @@ print_pieces([Piece | RestRow], PieceIndex):-
 
 print_piece(Piece):-
     write('|'),
-    write(' '),
-    write('X'),  % mudar para piece
-    write(' ').
-
-print_empty_row([]):-
-    write('|\n').
-
-print_empty_row([EmptyPiece | RestRow]):-
-    print_empty_piece,
-    print_empty_row(RestRow).
-
-print_empty_piece:-
-    write('|'),
-    write('_'),
-    write('_'),
-    write('_').
-
-print_slash_row([]):-
-    write('|\n').
-
-print_slash_row([SlashPiece | RestRow]):-
-    print_slash_piece,
-    print_slash_row(RestRow).
-
-print_slash_piece:-
-    write('|'),
-    write(' '),
-    write(' '),
-    write(' ').
+    write('  '),
+    write(Piece),  
+    write('  ').
     
     
     
