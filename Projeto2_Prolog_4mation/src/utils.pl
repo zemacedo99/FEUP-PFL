@@ -26,6 +26,6 @@ replace_row([ Row  | Rest]-Player, RowIndex-PositionIndex, [ Row | NewRest]):-
 
 replace_positon(0, Player, [_ | Rest] , [Player | Rest ]).
 
-replace_positon(PositionIndex, Player, [ _ | Rest], [ _ | NewRest]):-
+replace_positon(PositionIndex, Player, [ Temp | Rest], [ Temp | NewRest]):-
     Next is PositionIndex - 1,
     replace_positon(Next, Player , Rest, NewRest).
