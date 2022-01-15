@@ -4,8 +4,8 @@ getRow(RowIndex, [_|T], Row):-
     getRow(RowIndexTemp, T, Row),
     RowIndex is RowIndexTemp + 1.
 
-getElement(0, [Element|_], Element).
+getPosition(0, [Position|_], Position).
 
-getElement(ElementIndex, [_|T], Element):-
-    getElement(ElementIndexTemp, T, Element),
-    ElementIndex is ElementIndexTemp + 1.
+getPosition(PositionIndex, [_|T], Position):-
+    getPosition(PositionIndexTemp, T, Position),
+    PositionIndex is PositionIndexTemp + 1.

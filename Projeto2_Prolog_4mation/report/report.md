@@ -36,10 +36,8 @@ That player is the winner. If neither player is able to complete a row of 4, the
 
 [ref]: ./assets/game.jpg "4Mation Components"
 
-1 game board with a shape of a 7x7 square.
-48 pieces:
-    24 blue cubes.
-    24 pink cubes.
+The board game version of 4Mation have:
+1 board with a shape of a 7x7 square and 48 pieces (24 blue cubes, 24 pink cubes).
 
 You can find a more explanation online:
 [BoardGameGeek](https://boardgamegeek.com/boardgame/329175/4mation).
@@ -48,7 +46,6 @@ You can find a more explanation online:
 ## Game Logic
 
 Program starts by calling the predicate **play/0**, in which the initial menu is displayed calling **display_main_menu/0**.
-According to the selected game mode, the predicate that will fill the state of the game will be called (**display_game/2** or **display_game_computer/2** or **display_game_computer_PC_only/2**) .
 
 ### Internal representation of the state of the game
 
@@ -60,9 +57,9 @@ According to the selected game mode, the predicate that will fill the state of t
 
 ### List of valid plays
 
-### Game status validation
+### Game status evaluation*
 
-### Computer Play
+### Computer Play*
 
 ## Conclusions
 

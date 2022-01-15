@@ -16,7 +16,7 @@
 initial_state(0,_).
 
 initial_state(Size,GameState):-
-    Piece = ' ',
+    Piece = 'x',
     NewSize is Size - 1,
     make_row(NewSize,Piece,[Piece],Row),
     make_board(NewSize,Row,[Row],GameState).
