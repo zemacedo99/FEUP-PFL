@@ -10,11 +10,22 @@
 % game_over(+GameState, -Winner)
 % valid_moves(+GameState, -ListOfMoves) (Aqui ou no GameState.pl?)
 
-game_cycle(GameState):-
-    display_game(GameState),
-    choose_move(GameState,Move).  
+game_cycle(GameState-Player):-
+    display_game(GameState-Player),
+    choose_move(GameState-Player,Move).  
 
-choose_move(GameState,RowIndex-PositionIndex):-
+% game_cycle(GameState-Player):-
+%     game_over(GameState, Winner), !,
+%     congratulate(Winner).
+
+% game_cycle(GameState-Player):-
+%     choose_move(GameState, Player, Move),
+%     move(GameState, Move, NewGameState),
+%     next_player(Player, NextPlayer),
+%     display_game(GameState-NextPlayer), !,
+%     game_cycle(NewGameState-NextPlayer).
+
+choose_move(GameState-Player,RowIndex-PositionIndex):-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----    Chose a Row to play  -----\n'),
@@ -28,21 +39,21 @@ choose_move(GameState,RowIndex-PositionIndex):-
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
     read(PositionIndex),
-    valid_move(GameState,RowIndex-PositionIndex).
+    valid_move(GameState-Player,RowIndex-PositionIndex).
 
 
-valid_move(GameState,RowIndex-PositionIndex):-
-    valid_bounds(GameState,RowIndex-PositionIndex),
-    valid_empty_positon(GameState,RowIndex-PositionIndex).
+valid_move(GameState-Player,RowIndex-PositionIndex):-
+    valid_bounds(GameState-Player,RowIndex-PositionIndex),
+    valid_empty_positon(GameState-Player,RowIndex-PositionIndex).
 
-valid_bounds(GameState,RowIndex-PositionIndex):-
+valid_bounds(GameState-_,RowIndex-PositionIndex):-
     length(GameState,Length),
     RowIndex >= 0,
     PositionIndex >= 0,
     RowIndex < Length,
     PositionIndex < Length.
 
-valid_bounds(GameState,_):-
+valid_bounds(GameState-Player,_):-
     write('\n\n\n'),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -50,14 +61,14 @@ valid_bounds(GameState,_):-
     write('-----       pls try again     -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    game_cycle(GameState).
+    game_cycle(GameState-Player).
 
-valid_empty_positon(GameState,RowIndex-PositionIndex):-
+valid_empty_positon(GameState-_,RowIndex-PositionIndex):-
     getRow(RowIndex, GameState, Row),
     getPosition(PositionIndex, Row, Position),
     Position == ' '.
 
-valid_empty_positon(GameState,_):-
+valid_empty_positon(GameState-Player,_):-
     write('\n\n\n'),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -65,7 +76,7 @@ valid_empty_positon(GameState,_):-
     write('-----       is not empty      -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    game_cycle(GameState).
+    game_cycle(GameState-Player).
 
 
 

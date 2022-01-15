@@ -46,8 +46,8 @@ menu_option(1):-
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
     read(BoardSize),
-    initial_state(BoardSize,GameState),
-    game_cycle(GameState).
+    initial_state(BoardSize,GameState-Player),
+    game_cycle(GameState-Player).
     
 /*Human vs PC*/
 menu_option(2):-

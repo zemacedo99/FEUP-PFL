@@ -15,8 +15,9 @@
 
 initial_state(0,_).
 
-initial_state(Size,GameState):-
-    Piece = 'x',
+initial_state(Size,GameState-Player):-
+    Player = 1,
+    Piece = ' ',
     NewSize is Size - 1,
     make_row(NewSize,Piece,[Piece],Row),
     make_board(NewSize,Row,[Row],GameState).
@@ -40,13 +41,18 @@ make_row(Size,Piece,CurrentRow,Row):-
 %get_board
 %display_game(+GameState)
 
-display_game(Board):-
+display_game(GameState-Player):-
     write('\n\n\n'),
-    length(Board,Length),
+    length(GameState,Length),
     print_line(Length),
-    print_rows(Board,0),
+    print_rows(GameState,0),
     print_column_number(Length),
-    write('\n\n\n').
+    write('\n'),
+    write(' Player '),
+    write(Player),
+    write(' Turn:'),
+    write('\n'),
+    write('\n').
 
 print_column_number(Length):-
     RealLength is Length - 1,
