@@ -12,19 +12,19 @@ getPosition(PositionIndex, [_|T], Position):-
 
 
 
-replace_row([Row | _ ]-Player, 0-PositionIndex, [NewRow | _ ]):-
+replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
     Player == 1,
     replace_positon(PositionIndex, 'X', Row, NewRow).
 
-replace_row([Row | _ ]-Player, 0-PositionIndex, [NewRow | _ ]):-
+replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
     Player == 2,
     replace_positon(PositionIndex, 'O', Row, NewRow).
 
-replace_row([ _  | Rest]-Player, RowIndex-PositionIndex, [ _ | NewRest]):-
+replace_row([ Row  | Rest]-Player, RowIndex-PositionIndex, [ Row | NewRest]):-
     Next is RowIndex - 1,
     replace_row(Rest-Player, Next-PositionIndex,NewRest).
 
-replace_positon(0, Player, _ , [Player | _ ]).
+replace_positon(0, Player, [_ | Rest] , [Player | Rest ]).
 
 replace_positon(PositionIndex, Player, [ _ | Rest], [ _ | NewRest]):-
     Next is PositionIndex - 1,
