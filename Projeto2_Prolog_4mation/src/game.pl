@@ -12,7 +12,10 @@
 
 game_cycle(GameState-Player):-
     display_game(GameState-Player),
-    choose_move(GameState-Player,Move).  
+    choose_move(GameState-Player,RowIndex-PositionIndex),
+    move(GameState-Player, RowIndex-PositionIndex, NewGameState),
+    next_player(Player, NextPlayer),
+    game_cycle(NewGameState-NextPlayer).
 
 % game_cycle(GameState-Player):-
 %     game_over(GameState, Winner), !,
@@ -45,6 +48,7 @@ choose_move(GameState-Player,RowIndex-PositionIndex):-
 valid_move(GameState-Player,RowIndex-PositionIndex):-
     valid_bounds(GameState-Player,RowIndex-PositionIndex),
     valid_empty_positon(GameState-Player,RowIndex-PositionIndex).
+    % TODO: Validate if the position is adjacent (othogonally or diagonally) to the last position your opponent played 
 
 valid_bounds(GameState-_,RowIndex-PositionIndex):-
     length(GameState,Length),
@@ -77,6 +81,12 @@ valid_empty_positon(GameState-Player,_):-
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
     game_cycle(GameState-Player).
+
+next_player(1, 2).
+next_player(2, 1).
+
+move(GameState-Player, RowIndex-PositionIndex, NewGameState):-
+    replace_row(GameState-Player, RowIndex-PositionIndex, NewGameState).
 
 
 
