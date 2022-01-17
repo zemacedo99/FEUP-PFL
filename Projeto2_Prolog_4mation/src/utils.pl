@@ -31,4 +31,12 @@ replace_positon(PositionIndex, Player, [ Temp | Rest], [ Temp | NewRest]):-
     Next is PositionIndex - 1,
     replace_positon(Next, Player , Rest, NewRest).
 
-cls :- write('\33\[2J').
+cls :- 
+    write('\33\[2J'),
+    title.
+
+title:-
+    write('                 _____   ___\n'),
+    write(' /|  |\\  /|   /\\   |  | |   | |\\  |\n'),
+    write('/_|  | \\/ |  /__\\  |  | |   | | \\ |\n'),
+    write('  |  |    | /    \\ |  | |___| |  \\|\n').
