@@ -15,8 +15,7 @@
 
 initial_state(0,_).
 
-initial_state(Size,GameState-Player):-
-    Player = 1,
+initial_state(Size,GameState):-
     Piece = ' ',
     NewSize is Size - 1,
     make_row(NewSize,Piece,[Piece],Row),

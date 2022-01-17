@@ -13,11 +13,12 @@ getPosition(PositionIndex, [_|T], Position):-
 
 
 replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
-    Player == 1,
+    Player \= 2,
+    Player \= 'PC',
+    Player \= 'PC2',
     replace_positon(PositionIndex, 'X', Row, NewRow).
 
 replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
-    Player == 2,
     replace_positon(PositionIndex, 'O', Row, NewRow).
 
 replace_row([ Row  | Rest]-Player, RowIndex-PositionIndex, [ Row | NewRest]):-

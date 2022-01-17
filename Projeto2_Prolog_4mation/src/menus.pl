@@ -39,28 +39,41 @@ menu_option(0):-
 
 /*Human vs Human*/
 menu_option(1):-
+    choose_board_size(BoardSize),
+    initial_state(BoardSize,GameState),
+    Player = 1,
+    game_cycle(GameState-Player).
+    
+/*Human vs PC*/
+menu_option(2):-
+    choose_board_size(BoardSize),
+    initial_state(BoardSize,GameState),
+    Player = 'Human',
+    game_cycle(GameState-Player).
+
+/*PC vs Human*/
+menu_option(3):-
+    choose_board_size(BoardSize),
+    initial_state(BoardSize,GameState),
+    Player = 'PC',
+    game_cycle(GameState-Player).
+
+/* PC vs PC */
+menu_option(4):-
+    choose_board_size(BoardSize),
+    initial_state(BoardSize,GameState),
+    Player = 'PC1',
+    game_cycle(GameState-Player).
+
+/* Exit option */
+menu_option(5):-
+    write('Exiting game...\n').
+
+choose_board_size(BoardSize):-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----      Choose the size    -----\n'),
     write('-----        of the board     -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(BoardSize),
-    initial_state(BoardSize,GameState-Player),
-    game_cycle(GameState-Player).
-    
-/*Human vs PC*/
-menu_option(2):-
-    display_not_implemented.
-
-/*PC vs Human*/
-menu_option(3):-
-    display_not_implemented.
-
-/* PC vs. PC option*/
-menu_option(4):-
-    display_not_implemented.
-
-/* Exit option */
-menu_option(5):-
-    write('Exiting game...\n').
+    read(BoardSize).
