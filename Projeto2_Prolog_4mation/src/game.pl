@@ -2,16 +2,6 @@
 
 :- use_module(library(random)).
 
-% display_game(+GameState)
-% initial_state(+Size, -GameState)
-% move(+GameState, +Move, -NewGameState)
-
-% move(GameState, Move, NewGameState):-
-%     write(Move).
-
-% game_over(+GameState, -Winner)
-% valid_moves(+GameState, -ListOfMoves) (Aqui ou no GameState.pl?)
-
 game_cycle(GameState-Player,Level):-
     cls,
     display_game(GameState-Player),
@@ -33,6 +23,8 @@ not_human_mode(Player):-
     Player \= 'Human',
     Player \= 1,
     Player \= 2.
+
+% choose_move(+GameState, +Level, -Move).
 
 choose_move(_-Player,_,RowIndex-PositionIndex):-
     not_pc_mode(Player),
@@ -75,8 +67,9 @@ check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
 check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
     check_choice(GameState-Player,Level,RowIndex-PositionIndex).
 
+% TODO: valid_moves(+GameState, -ListOfMoves)
 valid_moves(GameState-Player, Moves):-
-    findall(RowIndex-PositionIndex, move(GameState-Player, RowIndex-PositionIndex, _), Moves).
+    findall(RowIndex-PositionIndex, valid_move(GameState-Player, RowIndex-PositionIndex), Moves).
 
 
 valid_move(GameState-Player,RowIndex-PositionIndex):-
@@ -99,7 +92,6 @@ valid_bounds(GameState-Player,_):-
     write('-----   Option out of bounds  -----\n'),
     write('-----       pls try again     -----\n'),
     write('-----                         -----\n'),
-    write('-----------------------------------\n'),
     fail.
 
 valid_empty_positon(GameState-_,RowIndex-PositionIndex):-
@@ -115,7 +107,6 @@ valid_empty_positon(GameState-Player,_):-
     write('----- The position you chose  -----\n'),
     write('-----       is not empty      -----\n'),
     write('-----                         -----\n'),
-    write('-----------------------------------\n'),
     fail.
 
 next_player(1, 2).
@@ -125,8 +116,9 @@ next_player('Human', 'PC').
 next_player('PC1', 'PC2').
 next_player('PC2', 'PC1').
 
+% move(+GameState, +Move, -NewGameState)
+
 move(GameState-Player, RowIndex-PositionIndex, NewGameState):-
-    % valid_move(GameState-Player,RowIndex-PositionIndex),
     replace_row(GameState-Player, RowIndex-PositionIndex, NewGameState).
 
 wait_menu:-
@@ -146,19 +138,6 @@ wait_menu(2):-
     write('Exiting game...\n'),
     halt.
 
+% TODO:game_over(+GameState, -Winner)
 
-
-
-
-
-% value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)
-% choose_move(+GameState, +Level, -Move).
-
-% GameMode
-%   pvc / cvp
-%   pvp
-%   cvc
-
-% Difficulty Level
-%   Level1: random valid move
-%   Level2: best move (greedy/blind algorithm)
+% TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)

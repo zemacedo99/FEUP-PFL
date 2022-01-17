@@ -1,4 +1,5 @@
 :- use_module(library(between)).
+
 %initial_board
 
 % initial_board([
@@ -35,9 +36,6 @@ make_row(Size,Piece,CurrentRow,Row):-
     NewSize is Size - 1,
     make_row(NewSize,Piece,NewRow,Row).
 
-
-
-%get_board
 %display_game(+GameState)
 
 display_game(GameState-Player):-
@@ -119,10 +117,3 @@ print_piece(Piece):-
     write('  '),
     write(Piece),  
     write('  ').
-    
-    
-    
-
-%get_piece
-%place_piece
-%find_adjacent

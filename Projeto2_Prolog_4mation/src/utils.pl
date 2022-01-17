@@ -1,3 +1,4 @@
+%get_piece
 getRow(0, [Row|_], Row).
 
 getRow(RowIndex, [_|T], Row):-
@@ -10,8 +11,7 @@ getPosition(PositionIndex, [_|T], Position):-
     getPosition(PositionIndexTemp, T, Position),
     PositionIndex is PositionIndexTemp + 1.
 
-
-
+%place_piece
 replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
     Player \= 2,
     Player \= 'PC',
@@ -40,3 +40,6 @@ title:-
     write(' /|  |\\  /|   /\\   |  | |   | |\\  |\n'),
     write('/_|  | \\/ |  /__\\  |  | |   | | \\ |\n'),
     write('  |  |    | /    \\ |  | |___| |  \\|\n').
+
+
+%find_adjacent
