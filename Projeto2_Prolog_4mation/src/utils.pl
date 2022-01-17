@@ -18,7 +18,7 @@ replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
     Player \= 'PC2',
     replace_positon(PositionIndex, 'X', Row, NewRow).
 
-replace_row([Row | Rest ]-Player, 0-PositionIndex, [NewRow | Rest ]):-
+replace_row([Row | Rest ]-_, 0-PositionIndex, [NewRow | Rest ]):-
     replace_positon(PositionIndex, 'O', Row, NewRow).
 
 replace_row([ Row  | Rest]-Player, RowIndex-PositionIndex, [ Row | NewRest]):-

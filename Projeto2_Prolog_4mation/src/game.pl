@@ -23,7 +23,7 @@ game_cycle(GameState-Player):-
 %     game_over(GameState, Winner), !,
 %     congratulate(Winner).
 
-choose_move(GameState-Player,RowIndex-PositionIndex):-
+choose_move(_-Player,RowIndex-PositionIndex):-
     Player \= 'PC',
     Player \= 'PC1',
     Player \= 'PC2',
@@ -41,7 +41,7 @@ choose_move(GameState-Player,RowIndex-PositionIndex):-
     write('-----------------------------------\n'),
     read(PositionIndex).
 
-choose_move(GameState-Player, RowIndex-PositionIndex):-
+choose_move(GameState-_, RowIndex-PositionIndex):-
     choose_pc_level(Level),
     % valid_moves(GameState-Player, Moves),
     choose_move(GameState, Level, RowIndex-PositionIndex).
@@ -61,7 +61,7 @@ choose_move(GameState, _, RowIndex-PositionIndex):-
 
 
 valid_moves(GameState-Player, Moves):-
-    findall(RowIndex-PositionIndex, move(GameState-Player, RowIndex-PositionIndex, NewGameState), Moves).
+    findall(RowIndex-PositionIndex, move(GameState-Player, RowIndex-PositionIndex, _), Moves).
 
 
 valid_move(GameState-Player,RowIndex-PositionIndex):-
