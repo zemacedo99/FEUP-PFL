@@ -12,13 +12,13 @@
 % game_over(+GameState, -Winner)
 % valid_moves(+GameState, -ListOfMoves) (Aqui ou no GameState.pl?)
 
-game_cycle(GameState-Player):-
+game_cycle(GameState-Player,Level):-
     cls,
     display_game(GameState-Player),
-    check_choice(GameState-Player,RowIndex-PositionIndex),
+    check_choice(GameState-Player,Level,RowIndex-PositionIndex),
     move(GameState-Player, RowIndex-PositionIndex, NewGameState),
     next_player(Player, NextPlayer),
-    game_cycle(NewGameState-NextPlayer).
+    game_cycle(NewGameState-NextPlayer,Level).
 
 % game_cycle(GameState-Player):-
 %     game_over(GameState, Winner), !,
@@ -34,7 +34,7 @@ not_human_mode(Player):-
     Player \= 1,
     Player \= 2.
 
-choose_move(_-Player,RowIndex-PositionIndex):-
+choose_move(_-Player,_,RowIndex-PositionIndex):-
     not_pc_mode(Player),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -50,31 +50,30 @@ choose_move(_-Player,RowIndex-PositionIndex):-
     write('-----------------------------------\n'),
     read(PositionIndex).
 
-choose_move(GameState-Player, RowIndex-PositionIndex):-
+choose_move(GameState-Player,Level,RowIndex-PositionIndex):-
     not_human_mode(Player),
-    choose_pc_level(Level),
     % valid_moves(GameState-Player, Moves),
-    choose_move(GameState, Level, RowIndex-PositionIndex).
+    choose_move(GameState, computer-Level, RowIndex-PositionIndex).
 
 
-choose_move(GameState, 1, RowIndex-PositionIndex):-
+choose_move(GameState,computer-1, RowIndex-PositionIndex):-
     length(GameState,Length),
     random(0,Length,RowIndex), 
     random(0,Length,PositionIndex).
 
-choose_move(GameState, _, RowIndex-PositionIndex):-
+choose_move(GameState,computer-_, RowIndex-PositionIndex):-
     % setof(Value-Mv, NewState^( member(Mv, Moves),
     % move(GameState, Mv, NewState),
     % evaluate_board(NewState, Value) ), [_V-Move|_]).
     choose_move(GameState, 1, RowIndex-PositionIndex).
     
-check_choice(GameState-Player,RowIndex-PositionIndex):-
-    choose_move(GameState-Player,RowIndex-PositionIndex),
-    valid_move(GameState-Player,RowIndex-PositionIndex).
+check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
+    choose_move(GameState-Player,Level,RowIndex-PositionIndex),
+    valid_move(GameState-Player,RowIndex-PositionIndex),
+    wait_menu.
 
-check_choice(GameState-Player,RowIndex-PositionIndex):-
-    check_choice(GameState-Player,RowIndex-PositionIndex).
-
+check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
+    check_choice(GameState-Player,Level,RowIndex-PositionIndex).
 
 valid_moves(GameState-Player, Moves):-
     findall(RowIndex-PositionIndex, move(GameState-Player, RowIndex-PositionIndex, _), Moves).
@@ -130,20 +129,25 @@ move(GameState-Player, RowIndex-PositionIndex, NewGameState):-
     % valid_move(GameState-Player,RowIndex-PositionIndex),
     replace_row(GameState-Player, RowIndex-PositionIndex, NewGameState).
 
-choose_pc_level(Level):-
+wait_menu:-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
-    write('-----      Choose the Level   -----\n'),
-    write('-----      of the PC player   -----\n'),
-    write('-----                         -----\n'),
-    write('-----          Level1:        -----\n'),
-    write('-----        random move      -----\n'),
-    write('-----                         -----\n'),
-    write('-----          Level2:        -----\n'),
-    write('-----         best move       -----\n'),
+    write('-----          Press:         -----\n'),
+    write('-----       1 to continue     -----\n'),
+    write('-----       2 to exit         -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(Level).
+    read(Option),
+    wait_menu(Option).
+
+wait_menu(1).
+
+wait_menu(2):- 
+    write('Exiting game...\n'),
+    halt.
+
+
+
 
 
 
