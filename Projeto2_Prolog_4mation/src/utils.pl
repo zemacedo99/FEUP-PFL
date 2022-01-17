@@ -30,3 +30,5 @@ replace_positon(0, Player, [_ | Rest] , [Player | Rest ]).
 replace_positon(PositionIndex, Player, [ Temp | Rest], [ Temp | NewRest]):-
     Next is PositionIndex - 1,
     replace_positon(Next, Player , Rest, NewRest).
+
+cls :- write('\33\[2J').

@@ -51,7 +51,7 @@ display_game(GameState-Player):-
     write(Player),
     write(' Turn:'),
     write('\n'),
-    write('\n').
+    write('\n'),!.
 
 print_column_number(Length):-
     RealLength is Length - 1,
