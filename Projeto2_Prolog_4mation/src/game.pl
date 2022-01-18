@@ -44,20 +44,21 @@ choose_move(_-Player,_,RowIndex-PositionIndex):-
 
 choose_move(GameState-Player,Level,RowIndex-PositionIndex):-
     not_human_mode(Player),
-    % valid_moves(GameState-Player, Moves),
-    choose_move(GameState, computer-Level, RowIndex-PositionIndex).
+    valid_moves(GameState-Player, Moves),
+    choose_move(GameState, computer-Level, RowIndex-PositionIndex, Moves).
 
 
-choose_move(GameState,computer-1, RowIndex-PositionIndex):-
-    length(GameState,Length),
-    random(0,Length,RowIndex), 
-    random(0,Length,PositionIndex).
+choose_move(_,computer-1, RowIndex-PositionIndex, Moves):-
+    random_select(RowIndex-PositionIndex, Moves, _).
+    % length(GameState,Length),
+    % random(0,Length,RowIndex), 
+    % random(0,Length,PositionIndex).
 
-choose_move(GameState,computer-_, RowIndex-PositionIndex):-
+choose_move(GameState,computer-_, RowIndex-PositionIndex, Moves):-
     % setof(Value-Mv, NewState^( member(Mv, Moves),
     % move(GameState, Mv, NewState),
     % evaluate_board(NewState, Value) ), [_V-Move|_]).
-    choose_move(GameState, 1, RowIndex-PositionIndex).
+    choose_move(GameState, computer-1, RowIndex-PositionIndex, Moves).
     
 check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
     choose_move(GameState-Player,Level,RowIndex-PositionIndex),
@@ -73,18 +74,19 @@ valid_moves(GameState-Player, Moves):-
 
 
 valid_move(GameState-Player,RowIndex-PositionIndex):-
-    valid_bounds(GameState-Player,RowIndex-PositionIndex),!,
+    valid_bounds(GameState-Player,RowIndex-PositionIndex),
     valid_empty_positon(GameState-Player,RowIndex-PositionIndex).
     % TODO: Validate if the position is adjacent (othogonally or diagonally) to the last position your opponent played 
 
 valid_bounds(GameState-_,RowIndex-PositionIndex):-
     length(GameState,Length),
-    RowIndex >= 0,
-    PositionIndex >= 0,
-    RowIndex < Length,
-    PositionIndex < Length.
+    NewLength is Length - 1,
+    between(0,NewLength,RowIndex),
+    between(0,NewLength,PositionIndex).
+
 
 valid_bounds(GameState-Player,_):-
+    not_pc_mode(Player),
     cls,
     display_game(GameState-Player),
     write('-----------------------------------\n'),
@@ -94,12 +96,15 @@ valid_bounds(GameState-Player,_):-
     write('-----                         -----\n'),
     fail.
 
+valid_bounds(_,_):-fail.
+
 valid_empty_positon(GameState-_,RowIndex-PositionIndex):-
     getRow(RowIndex, GameState, Row),
     getPosition(PositionIndex, Row, Position),
     Position == ' '.
 
 valid_empty_positon(GameState-Player,_):-
+    not_pc_mode(Player),
     cls,
     display_game(GameState-Player),
     write('-----------------------------------\n'),
@@ -108,6 +113,8 @@ valid_empty_positon(GameState-Player,_):-
     write('-----       is not empty      -----\n'),
     write('-----                         -----\n'),
     fail.
+
+valid_empty_positon(_,_):-fail.
 
 next_player(1, 2).
 next_player(2, 1).
