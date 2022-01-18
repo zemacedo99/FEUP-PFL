@@ -38,18 +38,25 @@ make_row(Size,Piece,CurrentRow,Row):-
 
 %display_game(+GameState)
 
-display_game(GameState-Player):-
-    write('\n\n\n'),
+display_game(GameState):-
     length(GameState,Length),
     print_line(Length),
     print_rows(GameState,0),
     print_column_number(Length),
+    write('\n\n\n'),!.
+
+display_game(GameState-Player):-
     write('\n'),
     write(' Player '),
     write(Player),
     write(' Turn:'),
     write('\n'),
-    write('\n'),!.
+    write('\n'),
+    length(GameState,Length),
+    print_line(Length),
+    print_rows(GameState,0),
+    print_column_number(Length),
+    write('\n\n\n'),!.
 
 print_column_number(Length):-
     RealLength is Length - 1,

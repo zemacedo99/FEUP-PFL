@@ -2,6 +2,12 @@
 
 :- use_module(library(random)).
 
+game_cycle(GameState-Player,_):-
+    game_over(GameState-Player, Winner),
+    cls,
+    display_game(GameState),
+    congratulate(Winner).
+
 game_cycle(GameState-Player,Level):-
     cls,
     display_game(GameState-Player),
@@ -10,9 +16,6 @@ game_cycle(GameState-Player,Level):-
     next_player(Player, NextPlayer),
     game_cycle(NewGameState-NextPlayer,Level).
 
-% game_cycle(GameState-Player):-
-%     game_over(GameState, Winner), !,
-%     congratulate(Winner).
 
 not_pc_mode(Player):-
     Player \= 'PC',
@@ -146,5 +149,17 @@ wait_menu(2):-
     halt.
 
 % TODO:game_over(+GameState, -Winner)
+
+game_over(GameState-Player, Winner):-
+    valid_moves(GameState-Player, Moves),
+    length(Moves,Length),
+    Length == 0,
+    next_player(Player,NextPlayer),
+    Winner = NextPlayer.
+
+congratulate(Winner):-
+    write('\nCongrats Player '),
+    write(Winner),
+    write('\n').
 
 % TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)
