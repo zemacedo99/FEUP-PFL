@@ -160,6 +160,6 @@ game_over(GameState-Player, Winner):-
 congratulate(Winner):-
     write('\nCongrats Player '),
     write(Winner),
-    write('\n').
+    write('\n\n\n').
 
 % TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)

@@ -39,6 +39,7 @@ make_row(Size,Piece,CurrentRow,Row):-
 %display_game(+GameState)
 
 display_game(GameState):-
+    write('\n\n\n'),
     length(GameState,Length),
     print_line(Length),
     print_rows(GameState,0),
