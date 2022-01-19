@@ -57,6 +57,7 @@ display_game(GameState-Player):-
     print_line(Length),
     print_rows(GameState,0),
     print_column_number(Length),
+    print_player_piece(Player),
     write('\n\n\n'),!.
 
 print_column_number(Length):-
@@ -125,3 +126,25 @@ print_piece(Piece):-
     write('  '),
     write(Piece),  
     write('  ').
+
+print_player_piece(Player):-
+    Player \= 2,
+    Player \= 'PC',
+    Player \= 'PC2',
+    write('\n'),
+    write('\n'),
+    write(' Player '),
+    write(Player),
+    write(' piece: '),
+    write('X'),   
+    write('\n').
+
+print_player_piece(Player):-
+    write('\n'),
+    write('\n'),
+    write(' Player '),
+    write(Player),
+    write(' piece: '),
+    write('O'),  
+    write('\n').
+
