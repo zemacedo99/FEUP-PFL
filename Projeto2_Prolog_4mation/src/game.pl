@@ -75,7 +75,15 @@ valid_move(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionInde
     valid_empty_positon(GameState-Player,RowIndex-PositionIndex),
     valid_adjacent(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex).
 
-valid_bounds(GameState-_,RowIndex-PositionIndex):-
+valid_bounds(GameState-Player,RowIndex-PositionIndex):-
+    not_pc_mode(Player),
+    length(GameState,Length),
+    NewLength is Length - 1,
+    between(0,NewLength,RowIndex),
+    between(0,NewLength,PositionIndex),!.
+
+valid_bounds(GameState-Player,RowIndex-PositionIndex):-
+    not_human_mode(Player),
     length(GameState,Length),
     NewLength is Length - 1,
     between(0,NewLength,RowIndex),
@@ -175,7 +183,7 @@ wait_menu(2):-
 % TODO:game_over(+GameState, -Winner)
 
 game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner):-
-    valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves),
+    valid_moves(GameState-'PC'-LastRowIndex-LastPositionIndex, Moves),
     length(Moves,Length),
     Length == 0,
     next_player(Player,NextPlayer),
