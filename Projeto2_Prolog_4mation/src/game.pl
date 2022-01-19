@@ -2,19 +2,19 @@
 
 :- use_module(library(random)).
 
-game_cycle(GameState-Player,_):-
-    game_over(GameState-Player, Winner),
+game_cycle(GameState-Player-LastRowIndex-LastPositionIndex,_):-
+    game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner),
     cls,
     display_game(GameState),
     congratulate(Winner).
 
-game_cycle(GameState-Player,Level):-
+game_cycle(GameState-Player-LastRowIndex-LastPositionIndex,Level):-
     cls,
     display_game(GameState-Player),
-    check_choice(GameState-Player,Level,RowIndex-PositionIndex),
+    check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
     move(GameState-Player, RowIndex-PositionIndex, NewGameState),
     next_player(Player, NextPlayer),
-    game_cycle(NewGameState-NextPlayer,Level).
+    game_cycle(NewGameState-NextPlayer-RowIndex-PositionIndex,Level).
 
 
 not_pc_mode(Player):-
@@ -29,7 +29,7 @@ not_human_mode(Player):-
 
 % choose_move(+GameState, +Level, -Move).
 
-choose_move(_-Player,_,RowIndex-PositionIndex):-
+choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
     not_pc_mode(Player),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -45,41 +45,35 @@ choose_move(_-Player,_,RowIndex-PositionIndex):-
     write('-----------------------------------\n'),
     read(PositionIndex).
 
-choose_move(GameState-Player,Level,RowIndex-PositionIndex):-
+choose_move(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
     not_human_mode(Player),
-    valid_moves(GameState-Player, Moves),
+    valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves),
     choose_move(GameState, computer-Level, RowIndex-PositionIndex, Moves).
-
 
 choose_move(_,computer-1, RowIndex-PositionIndex, Moves):-
     random_select(RowIndex-PositionIndex, Moves, _).
-    % length(GameState,Length),
-    % random(0,Length,RowIndex), 
-    % random(0,Length,PositionIndex).
 
+% TODO: computer level 2
 choose_move(GameState,computer-_, RowIndex-PositionIndex, Moves):-
-    % setof(Value-Mv, NewState^( member(Mv, Moves),
-    % move(GameState, Mv, NewState),
-    % evaluate_board(NewState, Value) ), [_V-Move|_]).
     choose_move(GameState, computer-1, RowIndex-PositionIndex, Moves).
     
-check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
-    choose_move(GameState-Player,Level,RowIndex-PositionIndex),
-    valid_move(GameState-Player,RowIndex-PositionIndex),
+check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
+    choose_move(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
+    valid_move(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex),
     wait_menu.
 
-check_choice(GameState-Player,Level,RowIndex-PositionIndex):-
-    check_choice(GameState-Player,Level,RowIndex-PositionIndex).
+check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
+    check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex).
 
-% TODO: valid_moves(+GameState, -ListOfMoves)
-valid_moves(GameState-Player, Moves):-
-    findall(RowIndex-PositionIndex, valid_move(GameState-Player, RowIndex-PositionIndex), Moves).
+% valid_moves(+GameState, -ListOfMoves)
+valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves):-
+    findall(RowIndex-PositionIndex, valid_move(GameState-Player-LastRowIndex-LastPositionIndex, RowIndex-PositionIndex), Moves).
 
 
-valid_move(GameState-Player,RowIndex-PositionIndex):-
+valid_move(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
     valid_bounds(GameState-Player,RowIndex-PositionIndex),
-    valid_empty_positon(GameState-Player,RowIndex-PositionIndex).
-    % TODO: Validate if the position is adjacent (othogonally or diagonally) to the last position your opponent played 
+    valid_empty_positon(GameState-Player,RowIndex-PositionIndex),
+    valid_adjacent(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex).
 
 valid_bounds(GameState-_,RowIndex-PositionIndex):-
     length(GameState,Length),
@@ -97,14 +91,14 @@ valid_bounds(GameState-Player,_):-
     write('-----   Option out of bounds  -----\n'),
     write('-----       pls try again     -----\n'),
     write('-----                         -----\n'),
-    fail.
+    fail,!.
 
-valid_bounds(_,_):-fail.
+valid_bounds(_,_):-fail,!.
 
 valid_empty_positon(GameState-_,RowIndex-PositionIndex):-
     getRow(RowIndex, GameState, Row),
     getPosition(PositionIndex, Row, Position),
-    Position == ' '.
+    Position == ' ',!.
 
 valid_empty_positon(GameState-Player,_):-
     not_pc_mode(Player),
@@ -115,17 +109,24 @@ valid_empty_positon(GameState-Player,_):-
     write('----- The position you chose  -----\n'),
     write('-----       is not empty      -----\n'),
     write('-----                         -----\n'),
-    fail.
+    fail,!.
 
-valid_empty_positon(_,_):-fail.
+valid_empty_positon(_,_):-fail,!.
+
+
+valid_adjacent(_-_-LastRowIndex-LastPositionIndex,_):-
+    LastRowIndex == 'first_move',
+    LastPositionIndex == 'first_move',!.
 
 valid_adjacent(_-_-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
-    CheckTop is LastRowIndex + 1,
-    CheckBottom is LastRowIndex - 1,
-    CheckRight is LastPositionIndex + 1,
-    CheckLeft is LastPositionIndex - 1,
-    between(CheckLeft,CheckRight,PositionIndex),
-    between(CheckBottom,CheckTop,RowIndex).
+    CheckTop = LastRowIndex + 1,
+    CheckBottom = LastRowIndex - 1,
+    CheckRight = LastPositionIndex + 1,
+    CheckLeft = LastPositionIndex - 1,
+    RowIndex =< CheckTop,
+    RowIndex >= CheckBottom,
+    PositionIndex =< CheckRight,
+    PositionIndex >= CheckLeft,!.
 
 valid_adjacent(GameState-Player-_-_,_):-
     not_pc_mode(Player),
@@ -137,9 +138,10 @@ valid_adjacent(GameState-Player-_-_,_):-
     write('-----      is not adjacent    -----\n'),
     write('-----   to the last position  -----\n'),
     write('-----   your opponent played  -----\n'),
-    fail.
+    write('-----                         -----\n'),
+    fail,!.
 
-valid_adjacent(_,_):-fail.
+valid_adjacent(_,_):-fail,!.
 
 next_player(1, 2).
 next_player(2, 1).
@@ -172,8 +174,8 @@ wait_menu(2):-
 
 % TODO:game_over(+GameState, -Winner)
 
-game_over(GameState-Player, Winner):-
-    valid_moves(GameState-Player, Moves),
+game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner):-
+    valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves),
     length(Moves,Length),
     Length == 0,
     next_player(Player,NextPlayer),

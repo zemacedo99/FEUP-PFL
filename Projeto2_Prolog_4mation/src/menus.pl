@@ -42,7 +42,7 @@ menu_option(1):-
     choose_board_size(BoardSize),
     initial_state(BoardSize,GameState),
     Player = 1,
-    game_cycle(GameState-Player,0).
+    game_cycle(GameState-Player-'first_move'-'first_move',0).
     
 /*Human vs PC*/
 menu_option(2):-
@@ -50,7 +50,7 @@ menu_option(2):-
     choose_board_size(BoardSize),
     initial_state(BoardSize,GameState),
     Player = 'Human',
-    game_cycle(GameState-Player,Level).
+    game_cycle(GameState-Player-'first_move'-'first_move',Level).
 
 /*PC vs Human*/
 menu_option(3):-
@@ -58,7 +58,7 @@ menu_option(3):-
     choose_board_size(BoardSize),
     initial_state(BoardSize,GameState),
     Player = 'PC',
-    game_cycle(GameState-Player,Level).
+    game_cycle(GameState-Player-'first_move'-'first_move',Level).
 
 
 /* PC vs PC */
@@ -67,7 +67,7 @@ menu_option(4):-
     choose_board_size(BoardSize),
     initial_state(BoardSize,GameState),
     Player = 'PC1',
-    game_cycle(GameState-Player,Level).
+    game_cycle(GameState-Player-'first_move'-'first_move',Level).
 
 /* Exit option */
 menu_option(5):-
