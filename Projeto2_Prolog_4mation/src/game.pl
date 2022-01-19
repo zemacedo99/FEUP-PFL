@@ -119,6 +119,28 @@ valid_empty_positon(GameState-Player,_):-
 
 valid_empty_positon(_,_):-fail.
 
+valid_adjacent(_-_-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
+    CheckTop is LastRowIndex + 1,
+    CheckBottom is LastRowIndex - 1,
+    CheckRight is LastPositionIndex + 1,
+    CheckLeft is LastPositionIndex - 1,
+    between(CheckLeft,CheckRight,PositionIndex),
+    between(CheckBottom,CheckTop,RowIndex).
+
+valid_adjacent(GameState-Player-_-_,_):-
+    not_pc_mode(Player),
+    cls,
+    display_game(GameState-Player),
+    write('-----------------------------------\n'),
+    write('-----                         -----\n'),
+    write('-----  The position you chose -----\n'),
+    write('-----      is not adjacent    -----\n'),
+    write('-----   to the last position  -----\n'),
+    write('-----   your opponent played  -----\n'),
+    fail.
+
+valid_adjacent(_,_):-fail.
+
 next_player(1, 2).
 next_player(2, 1).
 next_player('PC', 'Human').
