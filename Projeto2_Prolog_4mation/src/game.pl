@@ -195,12 +195,17 @@ wait_menu(2):-
 game_over(GameState-_-_-_, Winner):-
     four_in_a_row(GameState,Winner).
 
-game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner):-
+game_over(GameState-_-LastRowIndex-LastPositionIndex, Winner):-
     valid_moves(GameState-'PC'-LastRowIndex-LastPositionIndex, Moves),
     length(Moves,Length),
     Length == 0,
-    next_player(Player,NextPlayer),
-    Winner = NextPlayer.
+    Winner = 'draw'.
+
+congratulate(Winner):-
+    Winner == 'draw',
+    write('\nIt\'s a '),
+    write(Winner),
+    write('\n\n\n').
 
 congratulate(Winner):-
     write('\nCongrats Player '),
