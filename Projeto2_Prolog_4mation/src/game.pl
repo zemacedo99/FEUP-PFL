@@ -27,6 +27,16 @@ not_human_mode(Player):-
     Player \= 1,
     Player \= 2.
 
+not_player_two(Player):-
+    Player \= 2,
+    Player \= 'PC',
+    Player \= 'PC2'.
+
+not_player_one(Player):-
+    Player \= 1,
+    Player \= 'Human',
+    Player \= 'PC1'.
+
 % choose_move(+GameState, +Level, -Move).
 
 choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
@@ -182,6 +192,9 @@ wait_menu(2):-
 
 % TODO:game_over(+GameState, -Winner)
 
+game_over(GameState-_-_-_, Winner):-
+    four_in_a_row(GameState,Winner).
+
 game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner):-
     valid_moves(GameState-'PC'-LastRowIndex-LastPositionIndex, Moves),
     length(Moves,Length),
@@ -193,5 +206,48 @@ congratulate(Winner):-
     write('\nCongrats Player '),
     write(Winner),
     write('\n\n\n').
+
+find_a_piece(GameState,Length,CheckRow,CheckPos,Piece):-
+    length(GameState,Length),
+    BoardLength is Length - 1,
+    between(0,BoardLength,CheckRow),
+    between(0,BoardLength,CheckPos),
+    getRow(CheckRow, GameState, Row),
+    getPosition(CheckPos, Row, Piece).
+
+four_in_a_row(GameState,Winner):-
+    find_a_piece(GameState,Length,CheckRow,CheckPos,Piece),
+    Piece == 'O',
+
+    Half is Length // 2 + 1,
+    CheckRight is CheckPos + 1,
+
+    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half),
+    Winner = 2.
+
+four_in_a_row(GameState,Winner):-
+    find_a_piece(GameState,Length,CheckRow,CheckPos,Piece),
+    Piece == 'X',
+
+    Half is Length // 2 + 1,
+    CheckRight is CheckPos + 1,
+
+    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half),
+    Winner = 1.
+
+four_in_a_row(_):-false.
+
+horizontal_row(_,_,_,0):-!.
+
+horizontal_row(GameState-Length,Piece,CheckRown-CheckPos,Half):-
+    CheckPos < Length, 
+    getRow(CheckRown, GameState, Row),
+    getPosition(CheckPos, Row, Position),
+    Position == Piece,
+    NewHalf is Half - 1,
+    CheckRight is CheckPos + 1,
+    horizontal_row(GameState-Length,Piece,CheckRown-CheckRight,NewHalf).
+
+horizontal_row(_,_,_,_):-fail.
 
 % TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)
