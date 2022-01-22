@@ -233,7 +233,7 @@ four_in_a_row(GameState,Winner):-
 
 four_in_a_row(_,_):-false.
 
-horizontal_row(_,_,_,0):-!.
+horizontal_row(_,_,_,1):-!.
 
 horizontal_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
     CheckPos < Length, 
@@ -246,7 +246,7 @@ horizontal_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
 
 horizontal_row(_,_,_,_):-fail,!.
 
-vertical_row(_,_,_,0):-!.
+vertical_row(_,_,_,1):-!.
 
 vertical_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRow < Length, 
