@@ -220,9 +220,7 @@ four_in_a_row(GameState,Winner):-
     Piece == 'O',
 
     Half is Length // 2 + 1,
-    CheckRight is CheckPos + 1,
-
-    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half),
+    all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half),
     Winner = 2.
 
 four_in_a_row(GameState,Winner):-
@@ -230,24 +228,41 @@ four_in_a_row(GameState,Winner):-
     Piece == 'X',
 
     Half is Length // 2 + 1,
-    CheckRight is CheckPos + 1,
-
-    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half),
+    all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half),
     Winner = 1.
 
-four_in_a_row(_):-false.
+four_in_a_row(_,_):-false.
 
 horizontal_row(_,_,_,0):-!.
 
-horizontal_row(GameState-Length,Piece,CheckRown-CheckPos,Half):-
+horizontal_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
     CheckPos < Length, 
-    getRow(CheckRown, GameState, Row),
+    getRow(CheckRow, GameState, Row),
     getPosition(CheckPos, Row, Position),
     Position == Piece,
     NewHalf is Half - 1,
     CheckRight is CheckPos + 1,
-    horizontal_row(GameState-Length,Piece,CheckRown-CheckRight,NewHalf).
+    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,NewHalf).
 
-horizontal_row(_,_,_,_):-fail.
+horizontal_row(_,_,_,_):-fail,!.
+
+vertical_row(_,_,_,0):-!.
+
+vertical_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+    CheckRow < Length, 
+    getRow(CheckRow, GameState, Row),
+    getPosition(CheckPos, Row, Position),
+    Position == Piece,
+    NewHalf is Half - 1,
+    CheckBottom is CheckRow + 1,
+    vertical_row(GameState-Length,Piece,CheckBottom-CheckPos,NewHalf).
+
+vertical_row(_,_,_,_):-fail,!.
+
+all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+    CheckRight is CheckPos + 1,
+    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half);
+    CheckBottom is CheckRow + 1, 
+    vertical_row(GameState-Length,Piece,CheckBottom-CheckPos,Half).
 
 % TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)
