@@ -23,11 +23,7 @@ display_not_implemented:-
     write('-----     This option is not  -----\n'),
     write('-----     available yet.      -----\n'),
     write('-----                         -----\n'),
-    write('-----     0: Go back          -----\n'),
-    write('-----     5: Exit             -----\n'),
-    write('-----                         -----\n'),
-    write('-----------------------------------\n'),
-    read_menu_option.
+    write('-----------------------------------\n').
 
 read_menu_option:-
     read(Option),
@@ -71,13 +67,25 @@ menu_option(4):-
 
 /* Exit option */
 menu_option(5):-
-    write('Exiting game...\n').
+    write('Exiting game...\n'),
+    read(_),
+    halt.
 
 /* Exit option */
 menu_option(_):-
     cls,
-    write('\n\n\nWrong Input...\n'),
+    write('\n\n\nInvalid Input...\n\n'),
     display_main_menu.
+
+read_board_size_option(BoardSize):-
+    read(Option),
+    number(Option),
+    BoardSize is Option.
+
+read_board_size_option(BoardSize):-
+    cls,
+    write('\n\n\nInvalid Input...\n\n'),
+    choose_board_size(BoardSize).
 
 choose_board_size(BoardSize):-
     write('-----------------------------------\n'),
@@ -86,7 +94,18 @@ choose_board_size(BoardSize):-
     write('-----        of the board     -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(BoardSize).
+    read_board_size_option(BoardSize).
+
+read_level_option(Level):-
+    read(Option),
+    number(Option),
+    Option == 1,
+    Level is Option.
+    
+read_level_option(Level):-
+    cls,
+    display_not_implemented,
+    choose_pc_level(Level).
 
 choose_pc_level(Level):-
     write('-----------------------------------\n'),
@@ -94,11 +113,13 @@ choose_pc_level(Level):-
     write('-----      Choose the Level   -----\n'),
     write('-----      of the PC player   -----\n'),
     write('-----                         -----\n'),
-    write('-----          Level1:        -----\n'),
+    write('-----          Level 1:       -----\n'),
     write('-----        random move      -----\n'),
     write('-----                         -----\n'),
-    write('-----          Level2:        -----\n'),
+    write('-----          Level 2:       -----\n'),
     write('-----         best move       -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(Level).
+    read_level_option(Level).
+
+    

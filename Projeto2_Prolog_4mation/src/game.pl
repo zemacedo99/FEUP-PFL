@@ -188,6 +188,7 @@ wait_menu(1).
 
 wait_menu(2):- 
     write('Exiting game...\n'),
+    read(_),
     halt.
 
 % TODO:game_over(+Board, -Winner)
