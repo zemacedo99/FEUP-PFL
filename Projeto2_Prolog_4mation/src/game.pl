@@ -46,14 +46,14 @@ choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
     write('-----    Chose a Row to play  -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(RowIndex),
+    read_input(RowIndex),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----    Chose a empty space  -----\n'),
     write('-----          to play        -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(PositionIndex).
+    read_input(PositionIndex).
 
 choose_move(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
     not_human_mode(Player),
@@ -181,15 +181,16 @@ wait_menu:-
     write('-----       2 to exit         -----\n'),
     write('-----                         -----\n'),
     write('-----------------------------------\n'),
-    read(Option),
+    read_input(Option),
     wait_menu(Option).
 
-wait_menu(1).
 
 wait_menu(2):- 
     write('Exiting game...\n'),
     read(_),
     halt.
+
+wait_menu(_).
 
 % TODO:game_over(+Board, -Winner)
 

@@ -41,5 +41,19 @@ title:-
     write('/_|  | \\/ |  /__\\  |  | |   | | \\ |\n'),
     write('  |  |    | /    \\ |  | |___| |  \\|\n').
 
+read_input(Valid_Input):-
+    read(Input),
+    number(Input),
+    Valid_Input is Input,!.
+
+read_input(Valid_Input):-
+    write('-----------------------------------\n'),
+    write('-----                         -----\n'),
+    write('-----       Invalid Input     -----\n'),
+    write('-----         Trie again      -----\n'),
+    write('-----                         -----\n'),
+    write('-----------------------------------\n'),
+    read_input(Valid_Input).
+
 
 %find_adjacent

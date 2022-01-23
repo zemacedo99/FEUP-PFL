@@ -71,7 +71,7 @@ menu_option(5):-
     read(_),
     halt.
 
-/* Exit option */
+/* Invalid option */
 menu_option(_):-
     cls,
     write('\n\n\nInvalid Input...\n\n'),
