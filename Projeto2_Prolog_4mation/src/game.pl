@@ -247,7 +247,11 @@ all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     vertical_row(Board-Length,Piece,CheckBottom-CheckPos,Half);
     CheckBottom is CheckRow + 1,
     CheckRight is CheckPos + 1,
-    diagonal_row(Board-Length,Piece,CheckBottom-CheckRight,Half).
+    diagonal_row_right(Board-Length,Piece,CheckBottom-CheckRight,Half);
+    CheckBottom is CheckRow + 1,
+    CheckLeft is CheckPos - 1,
+    diagonal_row_left(Board-Length,Piece,CheckBottom-CheckLeft,Half).
+
 
 horizontal_row(_,_,_,1):-!.
 
@@ -275,9 +279,9 @@ vertical_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
 
 vertical_row(_,_,_,_):-fail,!.
 
-diagonal_row(_,_,_,1):-!.
+diagonal_row_right(_,_,_,1):-!.
 
-diagonal_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
+diagonal_row_right(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRow < Length, 
     CheckPos < Length, 
     getRow(CheckRow, Board, Row),
@@ -286,8 +290,23 @@ diagonal_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     NewHalf is Half - 1,
     CheckBottom is CheckRow + 1,
     CheckRight is CheckPos + 1,
-    diagonal_row(Board-Length,Piece,CheckBottom-CheckRight,NewHalf).
+    diagonal_row_right(Board-Length,Piece,CheckBottom-CheckRight,NewHalf).
 
-diagonal_row(_,_,_,_):-fail,!.
+diagonal_row_right(_,_,_,_):-fail,!.
+
+diagonal_row_left(_,_,_,1):-!.
+
+diagonal_row_left(Board-Length,Piece,CheckRow-CheckPos,Half):-
+    CheckRow < Length, 
+    CheckPos >= 0, 
+    getRow(CheckRow, Board, Row),
+    getPosition(CheckPos, Row, Position),
+    Position == Piece,
+    NewHalf is Half - 1,
+    CheckBottom is CheckRow + 1,
+    CheckLeft is CheckPos - 1,
+    diagonal_row_left(Board-Length,Piece,CheckBottom-CheckLeft,NewHalf).
+
+diagonal_row_left(_,_,_,_):-fail,!.
 
 % TODO:value(+Board, +Player, -Value) (Aqui ou no Board.pl?)
