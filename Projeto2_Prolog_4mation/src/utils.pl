@@ -47,13 +47,16 @@ read_input(Valid_Input):-
     Valid_Input is Input,!.
 
 read_input(Valid_Input):-
+    print_invalid_input,
+    read_input(Valid_Input).
+
+print_invalid_input:-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----       Invalid Input     -----\n'),
-    write('-----         Trie again      -----\n'),
+    write('-----         Try again      -----\n'),
     write('-----                         -----\n'),
-    write('-----------------------------------\n'),
-    read_input(Valid_Input).
+    write('-----------------------------------\n').
 
 
 %find_adjacent

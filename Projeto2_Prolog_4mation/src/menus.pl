@@ -29,10 +29,6 @@ read_menu_option:-
     read(Option),
     menu_option(Option).
 
-/*Go back*/
-menu_option(0):-
-    display_main_menu.
-
 /*Human vs Human*/
 menu_option(1):-
     choose_board_size(BoardSize),
@@ -74,7 +70,7 @@ menu_option(5):-
 /* Invalid option */
 menu_option(_):-
     cls,
-    write('\n\n\nInvalid Input...\n\n'),
+    print_invalid_input,
     display_main_menu.
 
 read_board_size_option(BoardSize):-
@@ -84,7 +80,7 @@ read_board_size_option(BoardSize):-
 
 read_board_size_option(BoardSize):-
     cls,
-    write('\n\n\nInvalid Input...\n\n'),
+    print_invalid_input,
     choose_board_size(BoardSize).
 
 choose_board_size(BoardSize):-
