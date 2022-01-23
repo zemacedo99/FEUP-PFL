@@ -17,39 +17,6 @@ game_cycle(Board-Player-LastRowIndex-LastPositionIndex,Level):-
     next_player(Player, NextPlayer),
     game_cycle(NewBoard-NextPlayer-RowIndex-PositionIndex,Level).
 
-%!      not_pc_mode(+Player) is det.
-%
-%       True if Player not 'PC','PC1','PC2'.
-not_pc_mode(Player):-
-    Player \= 'PC',
-    Player \= 'PC1',
-    Player \= 'PC2'.
-
-%!      not_human_mode(+Player) is det.
-%
-%       True if Player not 'Human','1','2'.
-not_human_mode(Player):-
-    Player \= 'Human',
-    Player \= 1,
-    Player \= 2.
-
-%!      not_player_two(+Player) is det.
-%
-%       True if Player not '2','PC','PC2'.
-not_player_two(Player):-
-    Player \= 2,
-    Player \= 'PC',
-    Player \= 'PC2'.
-
-%!      not_player_one(+Player) is det.
-%
-%       True if Player not '1','Human','PC1'.
-not_player_one(Player):-
-    Player \= 1,
-    Player \= 'Human',
-    Player \= 'PC1'.
-
-
 %!      choose_move(+GameState, +Level, -Move) is det.
 %
 %       True if input valid.
@@ -197,16 +164,6 @@ valid_adjacent(Board-Player-_-_,_):-
     fail,!.
 
 valid_adjacent(_,_):-fail,!.
-
-%!      next_player(+Player,-NewPlayer) is det.
-%!      next_player(-Player,+NewPlayer) is det.
-next_player(1, 2).
-next_player(2, 1).
-next_player('PC', 'Human').
-next_player('Human', 'PC').
-next_player('PC1', 'PC2').
-next_player('PC2', 'PC1').
-
 
 %!       move(+GameState, +Move, -NewGameState) is det.
 move(Board-Player, RowIndex-PositionIndex, NewGameState):-
