@@ -12,22 +12,22 @@
 %     [' ',' ',' ',' ',' ',' ',' '],
 % ]).
 
-%initial_state(+Size, -GameState)
+%initial_state(+Size, -Board)
 
 initial_state(0,_).
 
-initial_state(Size,GameState):-
+initial_state(Size,Board):-
     Piece = ' ',
     NewSize is Size - 1,
     make_row(NewSize,Piece,[Piece],Row),
-    make_board(NewSize,Row,[Row],GameState).
+    make_board(NewSize,Row,[Row],Board).
 
-make_board(0,_,GameState,GameState).
+make_board(0,_,Board,Board).
 
-make_board(Size,Row,CurrentBoard,GameState):-
+make_board(Size,Row,CurrentBoard,Board):-
     append(CurrentBoard,[Row], NewBoard),
     NewSize is Size - 1,
-    make_board(NewSize,Row,NewBoard,GameState).
+    make_board(NewSize,Row,NewBoard,Board).
 
 make_row(0,_,Row,Row).
 
@@ -36,26 +36,26 @@ make_row(Size,Piece,CurrentRow,Row):-
     NewSize is Size - 1,
     make_row(NewSize,Piece,NewRow,Row).
 
-%display_game(+GameState)
+%display_game(+Board)
 
-display_game(GameState):-
+display_game(Board):-
     write('\n\n\n'),
-    length(GameState,Length),
+    length(Board,Length),
     print_line(Length),
-    print_rows(GameState,0),
+    print_rows(Board,0),
     print_column_number(Length),
     write('\n\n\n'),!.
 
-display_game(GameState-Player):-
+display_game(Board-Player):-
     write('\n'),
     write(' Player '),
     write(Player),
     write(' Turn:'),
     write('\n'),
     write('\n'),
-    length(GameState,Length),
+    length(Board,Length),
     print_line(Length),
-    print_rows(GameState,0),
+    print_rows(Board,0),
     print_column_number(Length),
     print_player_piece(Player),
     write('\n\n\n'),!.

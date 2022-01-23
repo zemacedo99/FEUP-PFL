@@ -40,38 +40,44 @@ menu_option(0):-
 /*Human vs Human*/
 menu_option(1):-
     choose_board_size(BoardSize),
-    initial_state(BoardSize,GameState),
+    initial_state(BoardSize,Board),
     Player = 1,
-    game_cycle(GameState-Player-'first_move'-'first_move',0).
+    game_cycle(Board-Player-'first_move'-'first_move',0).
     
 /*Human vs PC*/
 menu_option(2):-
     choose_pc_level(Level),
     choose_board_size(BoardSize),
-    initial_state(BoardSize,GameState),
+    initial_state(BoardSize,Board),
     Player = 'Human',
-    game_cycle(GameState-Player-'first_move'-'first_move',Level).
+    game_cycle(Board-Player-'first_move'-'first_move',Level).
 
 /*PC vs Human*/
 menu_option(3):-
     choose_pc_level(Level),
     choose_board_size(BoardSize),
-    initial_state(BoardSize,GameState),
+    initial_state(BoardSize,Board),
     Player = 'PC',
-    game_cycle(GameState-Player-'first_move'-'first_move',Level).
+    game_cycle(Board-Player-'first_move'-'first_move',Level).
 
 
 /* PC vs PC */
 menu_option(4):-
     choose_pc_level(Level),
     choose_board_size(BoardSize),
-    initial_state(BoardSize,GameState),
+    initial_state(BoardSize,Board),
     Player = 'PC1',
-    game_cycle(GameState-Player-'first_move'-'first_move',Level).
+    game_cycle(Board-Player-'first_move'-'first_move',Level).
 
 /* Exit option */
 menu_option(5):-
     write('Exiting game...\n').
+
+/* Exit option */
+menu_option(_):-
+    cls,
+    write('\n\n\nWrong Input...\n'),
+    display_main_menu.
 
 choose_board_size(BoardSize):-
     write('-----------------------------------\n'),

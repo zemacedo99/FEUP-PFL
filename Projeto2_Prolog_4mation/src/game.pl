@@ -2,19 +2,19 @@
 
 :- use_module(library(random)).
 
-game_cycle(GameState-Player-LastRowIndex-LastPositionIndex,_):-
-    game_over(GameState-Player-LastRowIndex-LastPositionIndex, Winner),
+game_cycle(Board-Player-LastRowIndex-LastPositionIndex,_):-
+    game_over(Board-Player-LastRowIndex-LastPositionIndex, Winner),
     cls,
-    display_game(GameState),
+    display_game(Board),
     congratulate(Winner).
 
-game_cycle(GameState-Player-LastRowIndex-LastPositionIndex,Level):-
+game_cycle(Board-Player-LastRowIndex-LastPositionIndex,Level):-
     cls,
-    display_game(GameState-Player),
-    check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
-    move(GameState-Player, RowIndex-PositionIndex, NewGameState),
+    display_game(Board-Player),
+    check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
+    move(Board-Player, RowIndex-PositionIndex, NewBoard),
     next_player(Player, NextPlayer),
-    game_cycle(NewGameState-NextPlayer-RowIndex-PositionIndex,Level).
+    game_cycle(NewBoard-NextPlayer-RowIndex-PositionIndex,Level).
 
 
 not_pc_mode(Player):-
@@ -37,7 +37,7 @@ not_player_one(Player):-
     Player \= 'Human',
     Player \= 'PC1'.
 
-% choose_move(+GameState, +Level, -Move).
+% choose_move(+Board, +Level, -Move).
 
 choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
     not_pc_mode(Player),
@@ -55,55 +55,55 @@ choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
     write('-----------------------------------\n'),
     read(PositionIndex).
 
-choose_move(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
+choose_move(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
     not_human_mode(Player),
-    valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves),
-    choose_move(GameState, computer-Level, RowIndex-PositionIndex, Moves).
+    valid_moves(Board-Player-LastRowIndex-LastPositionIndex, Moves),
+    choose_move(Board, computer-Level, RowIndex-PositionIndex, Moves).
 
 choose_move(_,computer-1, RowIndex-PositionIndex, Moves):-
     random_select(RowIndex-PositionIndex, Moves, _).
 
 % TODO: computer level 2
-choose_move(GameState,computer-_, RowIndex-PositionIndex, Moves):-
-    choose_move(GameState, computer-1, RowIndex-PositionIndex, Moves).
+choose_move(Board,computer-_, RowIndex-PositionIndex, Moves):-
+    choose_move(Board, computer-1, RowIndex-PositionIndex, Moves).
     
-check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
-    choose_move(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
-    valid_move(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex),
+check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
+    choose_move(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
+    valid_move(Board-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex),
     wait_menu.
 
-check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
-    check_choice(GameState-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex).
+check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
+    check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex).
 
-% valid_moves(+GameState, -ListOfMoves)
-valid_moves(GameState-Player-LastRowIndex-LastPositionIndex, Moves):-
-    findall(RowIndex-PositionIndex, valid_move(GameState-Player-LastRowIndex-LastPositionIndex, RowIndex-PositionIndex), Moves).
+% valid_moves(+Board, -ListOfMoves)
+valid_moves(Board-Player-LastRowIndex-LastPositionIndex, Moves):-
+    findall(RowIndex-PositionIndex, valid_move(Board-Player-LastRowIndex-LastPositionIndex, RowIndex-PositionIndex), Moves).
 
 
-valid_move(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
-    valid_bounds(GameState-Player,RowIndex-PositionIndex),
-    valid_empty_positon(GameState-Player,RowIndex-PositionIndex),
-    valid_adjacent(GameState-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex).
+valid_move(Board-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
+    valid_bounds(Board-Player,RowIndex-PositionIndex),
+    valid_empty_positon(Board-Player,RowIndex-PositionIndex),
+    valid_adjacent(Board-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex).
 
-valid_bounds(GameState-Player,RowIndex-PositionIndex):-
+valid_bounds(Board-Player,RowIndex-PositionIndex):-
     not_pc_mode(Player),
-    length(GameState,Length),
+    length(Board,Length),
     NewLength is Length - 1,
     between(0,NewLength,RowIndex),
     between(0,NewLength,PositionIndex),!.
 
-valid_bounds(GameState-Player,RowIndex-PositionIndex):-
+valid_bounds(Board-Player,RowIndex-PositionIndex):-
     not_human_mode(Player),
-    length(GameState,Length),
+    length(Board,Length),
     NewLength is Length - 1,
     between(0,NewLength,RowIndex),
     between(0,NewLength,PositionIndex).
 
 
-valid_bounds(GameState-Player,_):-
+valid_bounds(Board-Player,_):-
     not_pc_mode(Player),
     cls,
-    display_game(GameState-Player),
+    display_game(Board-Player),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----   Option out of bounds  -----\n'),
@@ -113,15 +113,15 @@ valid_bounds(GameState-Player,_):-
 
 valid_bounds(_,_):-fail,!.
 
-valid_empty_positon(GameState-_,RowIndex-PositionIndex):-
-    getRow(RowIndex, GameState, Row),
+valid_empty_positon(Board-_,RowIndex-PositionIndex):-
+    getRow(RowIndex, Board, Row),
     getPosition(PositionIndex, Row, Position),
     Position == ' ',!.
 
-valid_empty_positon(GameState-Player,_):-
+valid_empty_positon(Board-Player,_):-
     not_pc_mode(Player),
     cls,
-    display_game(GameState-Player),
+    display_game(Board-Player),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('----- The position you chose  -----\n'),
@@ -146,10 +146,10 @@ valid_adjacent(_-_-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
     PositionIndex =< CheckRight,
     PositionIndex >= CheckLeft,!.
 
-valid_adjacent(GameState-Player-_-_,_):-
+valid_adjacent(Board-Player-_-_,_):-
     not_pc_mode(Player),
     cls,
-    display_game(GameState-Player),
+    display_game(Board-Player),
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
     write('-----  The position you chose -----\n'),
@@ -168,10 +168,10 @@ next_player('Human', 'PC').
 next_player('PC1', 'PC2').
 next_player('PC2', 'PC1').
 
-% move(+GameState, +Move, -NewGameState)
+% move(+Board, +Move, -NewBoard)
 
-move(GameState-Player, RowIndex-PositionIndex, NewGameState):-
-    replace_row(GameState-Player, RowIndex-PositionIndex, NewGameState).
+move(Board-Player, RowIndex-PositionIndex, NewBoard):-
+    replace_row(Board-Player, RowIndex-PositionIndex, NewBoard).
 
 wait_menu:-
     write('-----------------------------------\n'),
@@ -190,13 +190,13 @@ wait_menu(2):-
     write('Exiting game...\n'),
     halt.
 
-% TODO:game_over(+GameState, -Winner)
+% TODO:game_over(+Board, -Winner)
 
-game_over(GameState-_-_-_, Winner):-
-    four_in_a_row(GameState,Winner).
+game_over(Board-_-_-_, Winner):-
+    four_in_a_row(Board,Winner).
 
-game_over(GameState-_-LastRowIndex-LastPositionIndex, Winner):-
-    valid_moves(GameState-'PC'-LastRowIndex-LastPositionIndex, Moves),
+game_over(Board-_-LastRowIndex-LastPositionIndex, Winner):-
+    valid_moves(Board-'PC'-LastRowIndex-LastPositionIndex, Moves),
     length(Moves,Length),
     Length == 0,
     Winner = 'draw'.
@@ -212,80 +212,80 @@ congratulate(Winner):-
     write(Winner),
     write('\n\n\n').
 
-find_a_piece(GameState,Length,CheckRow,CheckPos,Piece):-
-    length(GameState,Length),
+find_a_piece(Board,Length,CheckRow,CheckPos,Piece):-
+    length(Board,Length),
     BoardLength is Length - 1,
     between(0,BoardLength,CheckRow),
     between(0,BoardLength,CheckPos),
-    getRow(CheckRow, GameState, Row),
+    getRow(CheckRow, Board, Row),
     getPosition(CheckPos, Row, Piece).
 
-four_in_a_row(GameState,Winner):-
-    find_a_piece(GameState,Length,CheckRow,CheckPos,Piece),
+four_in_a_row(Board,Winner):-
+    find_a_piece(Board,Length,CheckRow,CheckPos,Piece),
     Piece == 'O',
 
     Half is Length // 2 + 1,
-    all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half),
+    all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half),
     Winner = 2.
 
-four_in_a_row(GameState,Winner):-
-    find_a_piece(GameState,Length,CheckRow,CheckPos,Piece),
+four_in_a_row(Board,Winner):-
+    find_a_piece(Board,Length,CheckRow,CheckPos,Piece),
     Piece == 'X',
     
     Half is Length // 2 + 1,
-    all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half),
+    all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half),
     Winner = 1.
 
 four_in_a_row(_,_):-false.
 
-all_directions_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRight is CheckPos + 1,
-    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,Half);
+    horizontal_row(Board-Length,Piece,CheckRow-CheckRight,Half);
     CheckBottom is CheckRow + 1, 
-    vertical_row(GameState-Length,Piece,CheckBottom-CheckPos,Half);
+    vertical_row(Board-Length,Piece,CheckBottom-CheckPos,Half);
     CheckBottom is CheckRow + 1,
     CheckRight is CheckPos + 1,
-    diagonal_row(GameState-Length,Piece,CheckBottom-CheckRight,Half).
+    diagonal_row(Board-Length,Piece,CheckBottom-CheckRight,Half).
 
 horizontal_row(_,_,_,1):-!.
 
-horizontal_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+horizontal_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckPos < Length, 
-    getRow(CheckRow, GameState, Row),
+    getRow(CheckRow, Board, Row),
     getPosition(CheckPos, Row, Position),
     Position == Piece,
     NewHalf is Half - 1,
     CheckRight is CheckPos + 1,
-    horizontal_row(GameState-Length,Piece,CheckRow-CheckRight,NewHalf).
+    horizontal_row(Board-Length,Piece,CheckRow-CheckRight,NewHalf).
 
 horizontal_row(_,_,_,_):-fail,!.
 
 vertical_row(_,_,_,1):-!.
 
-vertical_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+vertical_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRow < Length, 
-    getRow(CheckRow, GameState, Row),
+    getRow(CheckRow, Board, Row),
     getPosition(CheckPos, Row, Position),
     Position == Piece,
     NewHalf is Half - 1,
     CheckBottom is CheckRow + 1,
-    vertical_row(GameState-Length,Piece,CheckBottom-CheckPos,NewHalf).
+    vertical_row(Board-Length,Piece,CheckBottom-CheckPos,NewHalf).
 
 vertical_row(_,_,_,_):-fail,!.
 
 diagonal_row(_,_,_,1):-!.
 
-diagonal_row(GameState-Length,Piece,CheckRow-CheckPos,Half):-
+diagonal_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRow < Length, 
     CheckPos < Length, 
-    getRow(CheckRow, GameState, Row),
+    getRow(CheckRow, Board, Row),
     getPosition(CheckPos, Row, Position),
     Position == Piece,
     NewHalf is Half - 1,
     CheckBottom is CheckRow + 1,
     CheckRight is CheckPos + 1,
-    diagonal_row(GameState-Length,Piece,CheckBottom-CheckRight,NewHalf).
+    diagonal_row(Board-Length,Piece,CheckBottom-CheckRight,NewHalf).
 
 diagonal_row(_,_,_,_):-fail,!.
 
-% TODO:value(+GameState, +Player, -Value) (Aqui ou no GameState.pl?)
+% TODO:value(+Board, +Player, -Value) (Aqui ou no Board.pl?)
