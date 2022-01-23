@@ -165,7 +165,7 @@ valid_moves(Board-Player-LastRowIndex-LastPositionIndex, Moves):-
 
 ### Computer Play*
 
-When it is the computer's turn to play, the predicate *valid_moves/2* will generate a list of possible moves and then the override of *choose_move/3* will then call the *random_select/3* function returning a random move for the PC.
+When it is the computer's turn to play, the predicate *valid_moves/2* will generate a list of possible moves and then the override of *choose_move/3* will call the *random_select/3* function returning a random move from the list of possible moves.
 
 ```
 choose_move(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
