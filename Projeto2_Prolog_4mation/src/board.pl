@@ -12,7 +12,7 @@
 %     [' ',' ',' ',' ',' ',' ',' '],
 % ]).
 
-%initial_state(+Size, -Board)
+%!      initial_state(+Size, -GameState) is det.
 
 initial_state(0,_).
 
@@ -22,6 +22,9 @@ initial_state(Size,Board):-
     make_row(NewSize,Piece,[Piece],Row),
     make_board(NewSize,Row,[Row],Board).
 
+%!      make_board(+Size,+Row,+[Row],-Board) is multi.
+%
+%       True when Size is 0.
 make_board(0,_,Board,Board).
 
 make_board(Size,Row,CurrentBoard,Board):-
@@ -29,6 +32,9 @@ make_board(Size,Row,CurrentBoard,Board):-
     NewSize is Size - 1,
     make_board(NewSize,Row,NewBoard,Board).
 
+%!      make_row(+Size,+Piece,+[Piece],-Row) is multi.
+%
+%       True when Size is 0.
 make_row(0,_,Row,Row).
 
 make_row(Size,Piece,CurrentRow,Row):-
@@ -36,8 +42,8 @@ make_row(Size,Piece,CurrentRow,Row):-
     NewSize is Size - 1,
     make_row(NewSize,Piece,NewRow,Row).
 
-%display_game(+Board)
 
+%!      display_game(+Board) is det.
 display_game(Board):-
     write('\n\n\n'),
     length(Board,Length),
@@ -46,6 +52,7 @@ display_game(Board):-
     print_column_number(Length),
     write('\n\n\n'),!.
 
+%!      display_game(+GameState) is det.
 display_game(Board-Player):-
     write('\n'),
     write(' Player '),

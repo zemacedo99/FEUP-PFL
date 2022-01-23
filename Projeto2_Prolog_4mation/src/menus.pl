@@ -1,6 +1,8 @@
 :- consult('board.pl').
 :- consult('game.pl').
 
+
+%!      display_main_menu/0
 display_main_menu:-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -15,6 +17,7 @@ display_main_menu:-
     write('-----------------------------------\n'),
     read_menu_option.
 
+%!      display_not_implemented/0
 display_not_implemented:-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -25,9 +28,13 @@ display_not_implemented:-
     write('-----                         -----\n'),
     write('-----------------------------------\n').
 
+%!      read_menu_option/0
 read_menu_option:-
     read(Option),
     menu_option(Option).
+
+
+%!      menu_option(+Option)
 
 /*Human vs Human*/
 menu_option(1):-
@@ -73,6 +80,9 @@ menu_option(_):-
     print_invalid_input,
     display_main_menu.
 
+%!      read_board_size_option(+Size) is det.
+%
+%       True if Size is a number.
 read_board_size_option(BoardSize):-
     read(Option),
     number(Option),
@@ -83,6 +93,10 @@ read_board_size_option(BoardSize):-
     print_invalid_input,
     choose_board_size(BoardSize).
 
+
+%!      choose_board_size(+Size) is det.
+%
+%       True if Size is a number.
 choose_board_size(BoardSize):-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -92,6 +106,9 @@ choose_board_size(BoardSize):-
     write('-----------------------------------\n'),
     read_board_size_option(BoardSize).
 
+%!      read_level_option(+Level) is det.
+%
+%       True if Level is 1.
 read_level_option(Level):-
     read(Option),
     number(Option),
@@ -103,6 +120,9 @@ read_level_option(Level):-
     display_not_implemented,
     choose_pc_level(Level).
 
+%!      choose_pc_level(+Level) is det.
+%
+%       True if Level is 1.
 choose_pc_level(Level):-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),

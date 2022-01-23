@@ -2,6 +2,7 @@
 
 :- use_module(library(random)).
 
+%!      game_cycle(+GameState,+Level) is multi.
 game_cycle(Board-Player-LastRowIndex-LastPositionIndex,_):-
     game_over(Board-Player-LastRowIndex-LastPositionIndex, Winner),
     cls,
@@ -16,28 +17,42 @@ game_cycle(Board-Player-LastRowIndex-LastPositionIndex,Level):-
     next_player(Player, NextPlayer),
     game_cycle(NewBoard-NextPlayer-RowIndex-PositionIndex,Level).
 
-
+%!      not_pc_mode(+Player) is det.
+%
+%       True if Player not 'PC','PC1','PC2'.
 not_pc_mode(Player):-
     Player \= 'PC',
     Player \= 'PC1',
     Player \= 'PC2'.
 
+%!      not_human_mode(+Player) is det.
+%
+%       True if Player not 'Human','1','2'.
 not_human_mode(Player):-
     Player \= 'Human',
     Player \= 1,
     Player \= 2.
 
+%!      not_player_two(+Player) is det.
+%
+%       True if Player not '2','PC','PC2'.
 not_player_two(Player):-
     Player \= 2,
     Player \= 'PC',
     Player \= 'PC2'.
 
+%!      not_player_one(+Player) is det.
+%
+%       True if Player not '1','Human','PC1'.
 not_player_one(Player):-
     Player \= 1,
     Player \= 'Human',
     Player \= 'PC1'.
 
-% choose_move(+Board, +Level, -Move).
+
+%!      choose_move(+GameState, +Level, -Move) is det.
+%
+%       True if input valid.
 
 choose_move(_-Player-_-_,_,RowIndex-PositionIndex):-
     not_pc_mode(Player),
@@ -66,6 +81,10 @@ choose_move(_,computer-1, RowIndex-PositionIndex, Moves):-
 % TODO: computer level 2
 choose_move(Board,computer-_, RowIndex-PositionIndex, Moves):-
     choose_move(Board, computer-1, RowIndex-PositionIndex, Moves).
+
+%!      check_choice(+GameState, +Level, -Move) is det.
+%
+%       True if input valid.
     
 check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
     choose_move(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex),
@@ -75,15 +94,26 @@ check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-Position
 check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex):-
     check_choice(Board-Player-LastRowIndex-LastPositionIndex,Level,RowIndex-PositionIndex).
 
-% valid_moves(+Board, -ListOfMoves)
+
+%!      valid_moves(+Board, -ListOfMoves) is det.
+
 valid_moves(Board-Player-LastRowIndex-LastPositionIndex, Moves):-
     findall(RowIndex-PositionIndex, valid_move(Board-Player-LastRowIndex-LastPositionIndex, RowIndex-PositionIndex), Moves).
 
+%!      valid_move(+GameState,?Move) is nondet.
+%!      valid_move(+GameState,+Move) is det.
+%
+%       True if Move valid.
 
 valid_move(Board-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex):-
     valid_bounds(Board-Player,RowIndex-PositionIndex),
     valid_empty_positon(Board-Player,RowIndex-PositionIndex),
     valid_adjacent(Board-Player-LastRowIndex-LastPositionIndex,RowIndex-PositionIndex).
+
+%!      valid_bounds(+GameState,?Move) is nondet.
+%!      valid_bounds(+GameState,+Move) is det.
+%
+%       True if Move inside the boards limits.
 
 valid_bounds(Board-Player,RowIndex-PositionIndex):-
     not_pc_mode(Player),
@@ -113,6 +143,10 @@ valid_bounds(Board-Player,_):-
 
 valid_bounds(_,_):-fail,!.
 
+%!      valid_empty_positon(+GameState,+Move) is det.
+%
+%       True if Move for an emply position.
+
 valid_empty_positon(Board-_,RowIndex-PositionIndex):-
     getRow(RowIndex, Board, Row),
     getPosition(PositionIndex, Row, Position),
@@ -131,6 +165,9 @@ valid_empty_positon(Board-Player,_):-
 
 valid_empty_positon(_,_):-fail,!.
 
+%!      valid_adjacent(+GameState,+Move) is det.
+%
+%       True if Move is adjacent to the last move made by opponent.
 
 valid_adjacent(_-_-LastRowIndex-LastPositionIndex,_):-
     LastRowIndex == 'first_move',
@@ -161,6 +198,8 @@ valid_adjacent(Board-Player-_-_,_):-
 
 valid_adjacent(_,_):-fail,!.
 
+%!      next_player(+Player,-NewPlayer) is det.
+%!      next_player(-Player,+NewPlayer) is det.
 next_player(1, 2).
 next_player(2, 1).
 next_player('PC', 'Human').
@@ -168,11 +207,13 @@ next_player('Human', 'PC').
 next_player('PC1', 'PC2').
 next_player('PC2', 'PC1').
 
-% move(+Board, +Move, -NewBoard)
 
-move(Board-Player, RowIndex-PositionIndex, NewBoard):-
-    replace_row(Board-Player, RowIndex-PositionIndex, NewBoard).
+%!       move(+GameState, +Move, -NewGameState) is det.
+move(Board-Player, RowIndex-PositionIndex, NewGameState):-
+    replace_row(Board-Player, RowIndex-PositionIndex, NewGameState).
 
+
+%!       wait_menu/0
 wait_menu:-
     write('-----------------------------------\n'),
     write('-----                         -----\n'),
@@ -192,7 +233,9 @@ wait_menu(2):-
 
 wait_menu(_).
 
-% TODO:game_over(+Board, -Winner)
+%!      game_over(+GameState, -Winner) is det.
+%
+%       True if one player is able to complete a row of (Length of the Board // 2 + 1) or there are no more valid moves.
 
 game_over(Board-_-_-_, Winner):-
     four_in_a_row(Board,Winner).
@@ -214,6 +257,8 @@ congratulate(Winner):-
     write(Winner),
     write('\n\n\n').
 
+%!      find_a_piece(+Board,-Length,+Row,+Position,-Piece) is nondet.
+
 find_a_piece(Board,Length,CheckRow,CheckPos,Piece):-
     length(Board,Length),
     BoardLength is Length - 1,
@@ -221,6 +266,10 @@ find_a_piece(Board,Length,CheckRow,CheckPos,Piece):-
     between(0,BoardLength,CheckPos),
     getRow(CheckRow, Board, Row),
     getPosition(CheckPos, Row, Piece).
+
+%!      four_in_a_row(+Board, -Winner) is det.
+%
+%       True if one player is able to complete a row of (Length of the Board // 2 + 1).
 
 four_in_a_row(Board,Winner):-
     find_a_piece(Board,Length,CheckRow,CheckPos,Piece),
@@ -240,6 +289,10 @@ four_in_a_row(Board,Winner):-
 
 four_in_a_row(_,_):-false.
 
+%!      all_directions_row(+Board,+Piece,+Position,+N) is det.
+%
+%       True if one player is able to complete a horizontal, vertical or diagonal row of N.
+
 all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckRight is CheckPos + 1,
     horizontal_row(Board-Length,Piece,CheckRow-CheckRight,Half);
@@ -252,6 +305,10 @@ all_directions_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     CheckLeft is CheckPos - 1,
     diagonal_row_left(Board-Length,Piece,CheckBottom-CheckLeft,Half).
 
+
+%!      horizontal_row(+Board,+Piece,+Position,+N) is det.
+%
+%       True if one player is able to complete a horizontal row of N.
 
 horizontal_row(_,_,_,1):-!.
 
@@ -266,6 +323,10 @@ horizontal_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
 
 horizontal_row(_,_,_,_):-fail,!.
 
+%!      vertical_row(+Board,+Piece,+Position,+N) is det.
+%
+%       True if one player is able to complete a vertical row of N.
+
 vertical_row(_,_,_,1):-!.
 
 vertical_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
@@ -278,6 +339,10 @@ vertical_row(Board-Length,Piece,CheckRow-CheckPos,Half):-
     vertical_row(Board-Length,Piece,CheckBottom-CheckPos,NewHalf).
 
 vertical_row(_,_,_,_):-fail,!.
+
+%!      diagonal_row_right(+Board,+Piece,+Position,+N) is det.
+%
+%       True if one player is able to complete a diagonal (top-left to bottom-right) row of N.
 
 diagonal_row_right(_,_,_,1):-!.
 
@@ -294,6 +359,10 @@ diagonal_row_right(Board-Length,Piece,CheckRow-CheckPos,Half):-
 
 diagonal_row_right(_,_,_,_):-fail,!.
 
+%!      diagonal_row_left(+Board,+Piece,+Position,+N) is det.
+%
+%       True if one player is able to complete a diagonal (bottom-left to top-right) row of N.
+
 diagonal_row_left(_,_,_,1):-!.
 
 diagonal_row_left(Board-Length,Piece,CheckRow-CheckPos,Half):-
@@ -309,4 +378,4 @@ diagonal_row_left(Board-Length,Piece,CheckRow-CheckPos,Half):-
 
 diagonal_row_left(_,_,_,_):-fail,!.
 
-% TODO:value(+Board, +Player, -Value) (Aqui ou no Board.pl?)
+% TODO:value(+Board, +Player, -Value)
