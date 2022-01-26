@@ -119,7 +119,7 @@ All the user interactions are made through either menus or messages. In order to
 
 ![Choosing Position Menus][ref8]
 
-[ref8]: .report/assets/chooseRowSpace.png "Choosing Row Menu"
+[ref8]: ./report/assets/chooseRowSpace.png "Choosing Row Menu"
 
 
 ### Execution of a move
