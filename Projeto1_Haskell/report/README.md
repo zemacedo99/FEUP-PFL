@@ -62,8 +62,9 @@ Our project structure is comprised of three modules:
 
 ### BigNumber Module
 
-- [BigNumber Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/BigNumber.hs)
-- [BigNumber Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/BigNumber.test.hs)
+
+- [BigNumber Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/BigNumber.hs)
+- [BigNumber Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/BigNumber.test.hs)
 
 ***
 #### **scanner :: String -> BigNumber**
@@ -526,8 +527,8 @@ equalsBN bn1 bn2 = bn1 == bn2
 
 ### Fib Module
 
-- [Fib Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/Fib.hs)
-- [Fib Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/Fib.test.hs)
+- [Fib Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/Fib.hs)
+- [Fib Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/Fib.test.hs)
 
 ***
 
@@ -665,8 +666,8 @@ fibListaInfinitaBN1 = TestCase (assertEqual "Should give the first 30 fibonnacci
 
 ### Utils Module
 
-- [Utils Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/Utils.hs)
-- [Utils Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/app/Src/Utils.test.hs)
+- [Utils Module](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/Utils.hs)
+- [Utils Tests](https://github.com/zemacedo99/FEUP-PFL/blob/main/Projeto1_Haskell/app/Src/Utils.test.hs)
 
 ***
 
